@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Manrope:wght@200..800&family=Rajdhani:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root{
+  --background: #050D35;
+  --primary: #796FFE;
+  --primary: #796FFE;
+  --background2: #121944;
+  --background3: #262C5A;
+  --textgreen: #2DE33F;
+  --textred: #E00C0C;
+  --ternary: #B8B8FF;
+  /* --bricolage: Bricolage Grotesque; */
+  --outfit:Outfit;
+  --red-flag: #ff7675;
+  --green-flag: #a5dd9b;
+  --border-line: rgba(255, 255, 255, 0.2);
+}
+
+
+
+html,
+body {
+  font-family: Manrope;
+  background-color: var(--background);
+  color: var(--ternary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--outfit);
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background:#050D35 ; /* Light background for the track */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background:  var(--ternary); /* Green scrollbar thumb */
+  border-radius: 4px;
+  height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  /* background: #388e3c; */
+   /* Darker green on hover */
+}
+
+
