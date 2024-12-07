@@ -24,6 +24,7 @@ import GroupSplit from './pages/GroupSplit'
 import BillSplit from './pages/BillSplit'
 
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import AuthHOC from './hooks/AuthHox'
 const AppLayout = () => {
   const [isLanding, setIsLanding] = useState(false)
   const location = useLocation()
@@ -43,38 +44,20 @@ const AppLayout = () => {
       <div className='flex h-[calc(100%-60px)]'>
         <SideBar isLanding={isLanding} />
         <Routes>
-          {/* <Route path='/' element={<Landing/>}></Route>
-          <Route path='/home' element={<AuthHOC><Home/></AuthHOC>}></Route>
-          <Route path='/tasks' element={<AuthHOC><Tasks/></AuthHOC>}></Route>
-          <Route path='/signUp' element={<SignUp/>}></Route>
-          <Route path='/error' element={<Error/>}></Route>
-          <Route path='/otpPage' element={<OTPpage/>}></Route>
-          */}
-          <Route path="/signup" element={<GoogleWrapper/> } />
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Landing />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/groups" element={<Groups />} />
-
-          <Route path="/split" element={<Split />} />
-          <Route path="/split/friendsplit" element={<FriendSplit />} />
-          <Route path="/split/groupsplit" element={<GroupSplit />} />
-          <Route path="/split/billsplit/:id" element={<BillSplit />} />
-
-          <Route path="/moneyflow" element={<Moneyflow />} />
-          <Route path="/savings" element={<SavingsGoals />} />
-          <Route path="/settings" element={<SettingsPage />} />
-
-          {/* <Route path="/friendsplit" element={<FriendSplit/>} />
-            <Route path="/groupsplit" element={<GroupSplit/>} /> */}
-
-          <Route path="*" element={<Error />} />
-          {/* <Route path='/otpPage' element={<OTPpage/>}></Route> */}
-
-
-          <Route path='*' element={<Error />} />
-        </Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/signup" element={<GoogleWrapper />} />
+      <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} />
+      <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
+      <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
+      <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />
+      <Route path="/split/friendsplit" element={<AuthHOC><FriendSplit /></AuthHOC>} />
+      <Route path="/split/groupsplit" element={<AuthHOC><GroupSplit /></AuthHOC>} />
+      <Route path="/split/billsplit/:id" element={<AuthHOC><BillSplit /></AuthHOC>} />
+      <Route path="/moneyflow" element={<AuthHOC><Moneyflow /></AuthHOC>} />
+      <Route path="/savings" element={<AuthHOC><SavingsGoals /></AuthHOC>} />
+      <Route path="/settings" element={<AuthHOC><SettingsPage /></AuthHOC>} />
+      <Route path="*" element={<Error />} />
+    </Routes>
       </div>
     </div>
   )
