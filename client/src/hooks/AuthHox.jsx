@@ -61,7 +61,7 @@ const AuthHOC = ({ children }) => {
         if (response.data.isValid) {
           console.log('User is logged in with token');
           setIsAuthenticated(true);
-          navigate('/home');
+          
         } else {
           console.log('Token invalid, clearing token');
           localStorage.removeItem('token');
