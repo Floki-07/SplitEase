@@ -31,7 +31,7 @@ const AppLayout = () => {
   console.log(location.pathname);
 
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname === '/details' || location.pathname === '/signup' || location.pathname === '/login') {
+    if (location.pathname === '/' || location.pathname === '/signup'  || location.pathname === '/login') {
       setIsLanding(true)
     } else {
       setIsLanding(false)
@@ -45,8 +45,10 @@ const AppLayout = () => {
         <SideBar isLanding={isLanding} />
         <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/signup" element={<GoogleWrapper />} />
-      <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} />
+      <Route path="/signup" element={<SignUpGoogleWrapper />} />
+      <Route path="/login" element={<LoginGoogleWrapper />} />
+      {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
+      <Route path="/home" element={<Home /> }/>
       <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
       <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
       <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />
@@ -66,9 +68,14 @@ const AppLayout = () => {
 
 
 
-const GoogleWrapper = () => {
+const SignUpGoogleWrapper = () => {
   return   <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-    <Signup    />
+    <Signup/>
+  </GoogleOAuthProvider>
+}
+const LoginGoogleWrapper = () => {
+  return   <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
+    <Login/>
   </GoogleOAuthProvider>
 }
 function App() {

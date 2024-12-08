@@ -1,6 +1,6 @@
 require('dotenv').config();
 const passport = require('passport');
-const User = require('./models/UserModel');
+const User = require('../models/UserModel');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -25,6 +25,8 @@ passport.use(new GoogleStrategy({
                 
                 // Build the user object dynamically
                 const newUser = {
+                    oauthProvider: 'google',
+                    oauthId:profile.id,
                     username: profile.displayName,
                     avatar: profile.photos[0].value,
                 };
