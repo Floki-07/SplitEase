@@ -10,78 +10,79 @@ const AuthHOC = ({ children }) => {
 
   useEffect(() => {
     const checkLoggedIn = async () => {
-      // Get token from localStorage
-
-      
       const token = localStorage.getItem('token');
-      
-      // If no token exists, immediately set loading to false
+    
       if (!token) {
-        console.log('No token found in localStorage');
-        setIsLoading(false);
-        setIsAuthenticated(false)
-        navigate('/login')
+        console.log('No token found in localStorage, attempting OAuth login check');
+        try {
+          // Attempt OAuth login check if no token is found
+          const response = await axios.get('http://localhost:3000/auth/login/success', {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 5000,
+          });
+    
+          console.log('OAuth login check response:', response.data);
+    
+          if (response.data?.success) { // Check `success` instead of `isLoggedIn`
+            console.log('User is authenticated via OAuth');
+            localStorage.setItem('token', response.data.token || ''); // Set token if server sends it
+            setIsAuthenticated(true);
+           
+          } else {
+            console.log('OAuth login failed or user not authenticated');
+            setIsAuthenticated(false);
+            navigate('/login');
+          }
+        } catch (error) {
+          console.error('Error during OAuth login check:', error);
+          setIsAuthenticated(false);
+          navigate('/login');
+        } finally {
+          setIsLoading(false);
+        }
         return;
       }
-
+    
       try {
-        // Configure axios request with full details
+        // Token-based login validation
         const response = await axios.get('http://localhost:3000/api/isLoggedIn', {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
-          // Add timeout to prevent indefinite loading
-          timeout: 5000
+          timeout: 5000,
         });
-
-        // Detailed logging of response
-        console.log('Full Login Check Response:', {
-          isValid: response.data.isValid,
-          data: response.data
-        });
-
+    
+        console.log('Token-based login check response:', response.data);
+    
         if (response.data.isValid) {
-          console.log('User is logged in:', response.data);
-          // Optionally redirect to home or keep current page
-          setIsAuthenticated(true)
+          console.log('User is logged in with token');
+          setIsAuthenticated(true);
           navigate('/home');
         } else {
-          console.log('User is not logged in.');
-          // Clear invalid token
+          console.log('Token invalid, clearing token');
           localStorage.removeItem('token');
-          setIsAuthenticated(false)
+          setIsAuthenticated(false);
           navigate('/login');
         }
       } catch (error) {
-        // Comprehensive error handling
-       
         if (error.response) {
-          // The request was made and the server responded with a status code
-          console.error('Login check server error:', {
+          console.error('Server returned error during token check:', {
             status: error.response.status,
             data: error.response.data,
-            headers: error.response.headers
           });
-
-          // Handle specific error scenarios
-          if (error.response.status === 401) {
-            // Unauthorized - clear token and redirect to login
-            localStorage.removeItem('token');
-            navigate('/login');
-          }
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error('No response received:', error.request);
         } else {
-          // Something happened in setting up the request
-          console.error('Error setting up request:', error.message);
+          console.error('Error with token-based request:', error.message);
         }
       } finally {
-        // Always set loading to false
         setIsLoading(false);
       }
     };
+    
+    checkLoggedIn();
     
     checkLoggedIn();
   }, [navigate]);
