@@ -25,4 +25,5 @@ SplitEase is a powerful and user-friendly **money expense tracker** and **bill-s
 ## 🛠️ **Installation**
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/SplitEase.git
+   git clone https://github.com/Floki-07/SplitEase.git
+
