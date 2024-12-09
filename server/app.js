@@ -10,7 +10,7 @@ const session = require('express-session');
 const User = require('./models/UserModel')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const authRouter=require('./routers/authRouter')
+const authRouter = require('./routers/authRouter')
 
 const app = express();
 
@@ -22,7 +22,8 @@ app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
-  allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials','Authorization'],
+  
+  allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials', 'Authorization', 'x-correlation-id'],
   credentials: true // mandoatory for google auths
 }));
 
@@ -37,7 +38,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api',authRouter)
+app.use('/api', authRouter)
 
 
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] }));
@@ -48,12 +49,19 @@ app.get("/auth/google/callback", passport.authenticate("google", {
 }));
 
 app.get('/auth/login/success', async (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "successful",
-    user: req.user,
-    corrId: req.headers['x-correlation-id']
-  });
+  if (req.isAuthenticated()) {
+    res.status(200).json({
+      success: true,
+      message: "successful",
+      user: req.user,
+      corrId: req.headers['x-correlation-id']
+    });
+  } else {
+    return res.status(401).json({
+      success: false,
+      message: "Failed to fetch user"
+    });
+  }
 });
 
 app.get('/auth/login/failed', async (req, res) => {
@@ -69,8 +77,8 @@ app.get('/api/isLoggedIn', (req, res) => {
   // Check for user from OAuth (e.g., req.user)
   if (req.isAuthenticated()) {
     const user = req.user;
-    return res.json({ 
-      isValid: true, 
+    return res.json({
+      isValid: true,
       userId: user._id,
       email: user.email,
       loginMethod: 'oauth'
@@ -78,7 +86,7 @@ app.get('/api/isLoggedIn', (req, res) => {
   }
   // Check for JWT token from email-password login
   const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
-  console.log('Token',token);  
+  console.log('Token', token);
 
   if (token) {
     try {
