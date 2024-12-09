@@ -1,75 +1,72 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [user, setUser] = useState(null); // State to track user information
   const [avatarUrl, setAvatarUrl] = useState('https://via.placeholder.com/150'); // Fallback avatar
-
+  const navigate=useNavigate()
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token"); // Token used for email-password login
-
+        const token = localStorage.getItem("token");
+  
+        let response;
         if (token) {
-          // Attempt to validate token and fetch user info in case of email-password login
-          const response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          const fetchedUser = response.data.user;
-          console.log("Response Data from Email-Password Login:", response.data);
-
-          if (fetchedUser) {
-            setUser(fetchedUser);
-
-            if (fetchedUser?.avatar) {
-              localStorage.setItem("AvatarUrl", fetchedUser.avatar);
-              setAvatarUrl(fetchedUser.avatar);
-            } else {
-              console.log("No avatar found in user data.");
-            }
-          } else {
-            console.log("No user data found.");
-          }
-        } else {
-          // Handle OAuth login if token doesn't exist
-          const response = await axios.get(
-            `http://localhost:3000/auth/login/success`,
-            {
-              withCredentials: true,
+          // Token-based login attempt
+          try {
+            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
               headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Credentials": true,
+                Authorization: `Bearer ${token}`,
               },
+            });
+  
+            if (response.data.user) {
+              setUser(response.data.user);
+              if (response.data.user.avatar) {
+                localStorage.setItem("AvatarUrl", response.data.user.avatar);
+                setAvatarUrl(response.data.user.avatar);
+              }
+              return;
             }
-          );
-
-          const fetchedUser = response.data.user;
-          console.log("Response Data from OAuth Login:", response.data);
-
-          if (fetchedUser) {
-            setUser(fetchedUser);
-
-            if (fetchedUser?.avatar) {
-              localStorage.setItem("AvatarUrl", fetchedUser.avatar);
-              setAvatarUrl(fetchedUser.avatar);
-            } else {
-              console.log("No avatar found from OAuth user.");
-            }
-          } else {
-            console.log("No user data received from OAuth.");
+          } catch (tokenError) {
+            console.error("Token validation failed:", tokenError);
+            localStorage.removeItem("token");
           }
         }
+  
+        // OAuth login attempt
+        try {
+          response = await axios.get(`http://localhost:3000/auth/login/success`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(),
+            },
+          });
+  
+          if (response.data.user) {
+            setUser(response.data.user);
+            if (response.data.user.avatar) {
+              localStorage.setItem("AvatarUrl", response.data.user.avatar);
+              setAvatarUrl(response.data.user.avatar);
+            }
+          } else {
+            throw new Error("No user data received");
+          }
+        } catch (oauthError) {
+          console.error("OAuth login failed:", oauthError);
+          navigate('/login');
+        }
       } catch (error) {
-        console.error("Error while fetching user data:", error);
+        console.error("Critical error in fetchUserData:", error);
+        localStorage.removeItem("token");
+        navigate('/login');
       }
     };
-
-    // Attempt to fetch user data
+  
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="dashboard-container">

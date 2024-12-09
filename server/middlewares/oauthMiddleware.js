@@ -13,7 +13,7 @@ passport.use(new GoogleStrategy({
 },
     async function (accessToken, refreshToken, profile, done) {
         try {
-            console.log('Profile', profile);
+            // console.log('Profile', profile);
             
             let user = await User.findOne({ email: profile.emails?.[0]?.value });
             
@@ -68,7 +68,7 @@ passport.use(new GoogleStrategy({
                 user.token = token;
             }
             
-            console.log("User profile successfully processed:", user);
+            // console.log("User profile successfully processed:", user);  
             
             // Change 'callback' to 'done' as this is a Passport strategy
             return done(null, { ...user.toObject(), token: user.token });
