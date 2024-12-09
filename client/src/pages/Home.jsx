@@ -6,6 +6,8 @@ const Home = () => {
   const [user, setUser] = useState(null); // State to track user information
   const [avatarUrl, setAvatarUrl] = useState('https://via.placeholder.com/150'); // Fallback avatar
   const navigate=useNavigate()
+
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {

@@ -61,4 +61,9 @@ h6 {
    /* Darker green on hover */
 }
 
-
+/* Loader for dashboard */
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}

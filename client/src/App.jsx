@@ -22,9 +22,9 @@ import Split from './pages/Split'
 import FriendSplit from './pages/FriendSplit'
 import GroupSplit from './pages/GroupSplit'
 import BillSplit from './pages/BillSplit'
-
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import AuthHOC from './hooks/AuthHox'
+import Dashboard from './pages/Dashboard'
 const AppLayout = () => {
   const [isLanding, setIsLanding] = useState(false)
   const location = useLocation()
@@ -49,6 +49,7 @@ const AppLayout = () => {
       <Route path="/login" element={<LoginGoogleWrapper />} />
       {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
       <Route path="/home" element={<Home /> }/>
+      <Route path="/dashboard" element={<Dashboard /> }/>
       <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
       <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
       <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />
