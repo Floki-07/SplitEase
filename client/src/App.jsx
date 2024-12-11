@@ -31,36 +31,45 @@ const AppLayout = () => {
   console.log(location.pathname);
 
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname === '/signup'  || location.pathname === '/login') {
+    if (location.pathname === '/' || location.pathname === '/signup' || location.pathname === '/login') {
       setIsLanding(true)
     } else {
       setIsLanding(false)
     }
   }, [location.pathname])
 
+
+  // Global States
+  const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('AvatarUrl')); // Fallback avatar
+  if (avatarUrl == null) {
+    setAvatarUrl('/images/Profile.jpg')
+  }
+  const [user, setUser] = useState(null);
+
+
   return (
     <div className='bg-[--background  ] h-screen text-[--primary]'>
-      <Navbar isLanding={isLanding} />
-      <div className='flex h-[calc(100%-60px)]'>
+      <Navbar isLanding={isLanding} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user} />
+      <div className='flex h-[calc(100%-60px)] custom-scrollbar'>
         <SideBar isLanding={isLanding} />
         <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/signup" element={<SignUpGoogleWrapper />} />
-      <Route path="/login" element={<LoginGoogleWrapper />} />
-      {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
-      <Route path="/home" element={<Home /> }/>
-      <Route path="/dashboard" element={<Dashboard /> }/>
-      <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
-      <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
-      <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />
-      <Route path="/split/friendsplit" element={<AuthHOC><FriendSplit /></AuthHOC>} />
-      <Route path="/split/groupsplit" element={<AuthHOC><GroupSplit /></AuthHOC>} />
-      <Route path="/split/billsplit/:id" element={<AuthHOC><BillSplit /></AuthHOC>} />
-      <Route path="/moneyflow" element={<AuthHOC><Moneyflow /></AuthHOC>} />
-      <Route path="/savings" element={<AuthHOC><SavingsGoals /></AuthHOC>} />
-      <Route path="/settings" element={<AuthHOC><SettingsPage /></AuthHOC>} />
-      <Route path="*" element={<Error />} />
-    </Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/signup" element={<SignUpGoogleWrapper />} />
+          <Route path="/login" element={<LoginGoogleWrapper />} />
+          {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
+          <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user} setUser={setUser} />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
+          <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
+          <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />
+          <Route path="/split/friendsplit" element={<AuthHOC><FriendSplit /></AuthHOC>} />
+          <Route path="/split/groupsplit" element={<AuthHOC><GroupSplit /></AuthHOC>} />
+          <Route path="/split/billsplit/:id" element={<AuthHOC><BillSplit /></AuthHOC>} />
+          <Route path="/moneyflow" element={<AuthHOC><Moneyflow /></AuthHOC>} />
+          <Route path="/savings" element={<AuthHOC><SavingsGoals /></AuthHOC>} />
+          <Route path="/settings" element={<AuthHOC><SettingsPage /></AuthHOC>} />
+          <Route path="*" element={<Error />} />
+        </Routes>
       </div>
     </div>
   )
@@ -70,13 +79,13 @@ const AppLayout = () => {
 
 
 const SignUpGoogleWrapper = () => {
-  return   <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-    <Signup/>
+  return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
+    <Signup />
   </GoogleOAuthProvider>
 }
 const LoginGoogleWrapper = () => {
-  return   <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-    <Login/>
+  return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
+    <Login />
   </GoogleOAuthProvider>
 }
 function App() {

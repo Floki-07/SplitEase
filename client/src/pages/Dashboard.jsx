@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import CircularProgressBar from "../components/CircularProgressBar";
 
 const Dashboard = () => {
+    const middleRef = useRef(null); // Create a ref for the target element
+
+    const handleScroll = () => {
+        if (middleRef.current) {
+            middleRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+        }
+    };
     return (
         <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
             {/* Header */}
@@ -43,6 +50,8 @@ const Dashboard = () => {
                         </li>
                     </ul>
                 </div>
+                <input type="button" onClick={handleScroll}  className="bg-red-400"/>
+
 
                 {/* Active Goals */}
                 <div className="bg-[#121944] rounded-lg p-6 w-[430px] text-center  h-[350px]">
@@ -67,11 +76,16 @@ const Dashboard = () => {
 
                         </div>
 
-
                     </div>
                 </div>
 
                 {/* Category wise Split */}
+
+                <div className="flex w-[90%] bg-red-500 h-[600px] middle" id="middle " ref={middleRef}>
+
+                    <div className=""></div>
+                    <div className=""></div>
+                </div>
 
             </div>
         </div>
