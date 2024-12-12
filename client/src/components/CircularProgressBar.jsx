@@ -5,7 +5,8 @@ const CircularProgressBar = ({
   radiusInput = 45,
   strokeInput = 10,
   size = 250, // Size of the container and SVG
-  showtext=true
+  showtext = true,
+  title
 }) => {
   const radius = radiusInput; // Radius of the circle
   const strokeWidth = strokeInput; // Width of the stroke
@@ -45,7 +46,7 @@ const CircularProgressBar = ({
 
         {/* Center text */}
         {
-            showtext && <text
+          showtext && <text
             x="50"
             y="50"
             fontFamily="Verdana"
@@ -55,10 +56,13 @@ const CircularProgressBar = ({
             alignmentBaseline="middle"
             className="circletext"
           >
+
             {percentage}%
+
+
           </text>
         }
-        
+
       </svg>
     </div>
   );
