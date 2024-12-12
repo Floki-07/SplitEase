@@ -10,19 +10,22 @@ const initialCategories = [
   'Grocery', 'Restaurants', 'Commute', "Bills", 'Stationary', 'Trips', "Micellaneous"
 ]
 
+
+
 const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
+
   const [toggleScrollBtn, setToggleScrollBtn] = useState(true)
   const [categories, setcategories] = useState(initialCategories)
   const navigate = useNavigate()
   const middleRef = useRef(null); // Create a ref for the target element
   const topRef = useRef(null); // Create a ref for the target element
 
-  const handleScrollDown = () => {
-    if (middleRef.current) {
-      middleRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
-    }
-    setToggleScrollBtn(false)
-  };
+  // const handleScrollDown = () => {
+  //   if (middleRef.current) {
+  //     middleRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
+  //   }
+  //   setToggleScrollBtn(false)
+  // };
   const handleScrollUp = () => {
     if (topRef.current) {
       const offsetTop = topRef.current.offsetTop; // Get the top position of the target element
@@ -31,6 +34,17 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
         behavior: 'smooth', // Smooth scrolling
       });
       setToggleScrollBtn(true);
+    }
+  };
+
+  const handleScrollDown = () => {
+    if (middleRef.current) {
+      const offsetTop = middleRef.current.offsetTop; // Get the top position of the target element
+      window.scrollTo({
+        top: offsetTop + 200, // Subtract 100px for extra scroll
+        behavior: 'smooth', // Smooth scrolling
+      });
+      setToggleScrollBtn(false);
     }
   };
 
@@ -131,7 +145,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             {/* Budget vs Expense */}
             <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
               <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
-              <CircularProgressBar percentage={40} />
+              <CircularProgressBar percentage={40} title={'Income Used'} />
 
             </div>
 
@@ -168,7 +182,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
               <div className="container savings flex flex-col overflow-y-auto custom-scrollbar   h-[250px] overflow-x-hidden w-[390px]  px-2 gap-2">
 
                 <div className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
-                  <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} />
+                  <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''}/>
                   <div className="min-h-[150px] flex justify-center items-center ">
                     <h1 className="text-[28px] font-semibold tracking-wide"> Buy Iphone </h1 >
                   </div>
@@ -199,7 +213,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             {/* Category wise Split */}
             {/* 
              */}
-            <div className={`${toggleScrollBtn == true && ''} flex flex-col  items-center w-[98%] rounded-md bg-[--background2] h-[400px] middle mt-[1px]`} id="middle " ref={middleRef}>
+            <div className={`${toggleScrollBtn == true && ''} flex flex-col  items-center w-[98%] rounded-md bg-[--background2] h-[400px] middle mt-[100px]`} id="middle " ref={middleRef}>
 
             <div className=" flex justify-between items-center mb-2 mt-1">
                <h1 className="text-white text-[26px] font-bold">
@@ -236,7 +250,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             </div>
 
             {/* Scroll Up */}
-            <div className="flex w-full justify-end">
+            <div className="flex w-full justify-end mb-[100px]">
               <div
                 onClick={handleScrollUp}
                 className="w-[40px] h-[40px] relative bg-[--ternary] rounded-full flex justify-center items-center " >

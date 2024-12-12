@@ -86,7 +86,7 @@ app.get('/api/isLoggedIn', (req, res) => {
   }
   // Check for JWT token from email-password login
   const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
-  console.log('Token', token);
+  // console.log('Token', token);
 
   if (token) {
     try {
