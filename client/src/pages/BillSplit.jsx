@@ -10,11 +10,11 @@ const BillSplit = () => {
 
                 <div className=' mt-2 mx-auto leftbox translate-y[-10%] h-[440px] w-[400px] bg-[--background2] shadow-lg shadow-black rounded-md'>
                     <div className='flex  items-center h-[10vh] gap-5 mt-2  w-[80%] mx-auto'>
-                        <div>
-                            <img src="/images/Sample.png" alt="" />
+                        <div className='h-[70px] w-[50px] rounded-full flex justify-center items-center '>
+                            <img src="/images/Group.jpeg" alt="" height='70px' className='rounded-full object-fill'  />
                         </div>
                         <div>
-                            <h1 className='text-white text-[24px] mt-2'> TIGER GANG</h1>
+                            <h1 className='text-white text-[24px] mt-2'> Buddies Corner</h1>
                         </div>
                         <div>
                             <Pencil className='text-[--primary] translate-y-[-50%] translate-x-5 hover:text-purple-600 hover:scale-105  ' />
@@ -55,7 +55,7 @@ const BillSplit = () => {
                                             className='object-contain' />
                                     </div>
                                     <div className=''>
-                                        <h2 className='text-white text-[18px] '>Tejas</h2>
+                                        <h2 className='text-white text-[18px] '>Yasar</h2>
                                     </div>
                                 </div>
                                 <div className='w-[100px] text-sm text-[--textred]'>
@@ -76,7 +76,7 @@ const BillSplit = () => {
                                             className='object-contain' />
                                     </div>
                                     <div className=''>
-                                        <h2 className='text-white text-[18px] '>Tejas</h2>
+                                        <h2 className='text-white text-[18px] '>Sujal</h2>
                                     </div>
                                 </div>
                                 <div className='w-[100px] text-sm text-[--ternary]'>

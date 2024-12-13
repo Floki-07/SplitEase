@@ -103,7 +103,7 @@ const SavingsGoalsPage = () => {
       }}
     >
       <div className="container mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Savings Goals</h1>
+        <h1 className="text-[28px] font-bold mb-6 text-[--heading]" >Savings Goals</h1>
 
         <button
           onClick={() => setIsModalOpen(true)}
