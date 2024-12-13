@@ -36,6 +36,23 @@ const FriendSplit = () => {
                   className='object-contain' />
               </div>
               <div className=''>
+                <h2 className='text-white text-lg '>Sujal</h2>
+              </div>
+            </div>
+
+            <div className='w-[2vw] h-[4vh] '>
+              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
+            </div>
+          </div>
+          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
+
+            <div className="flex justify-between w-[6vw] items-center gap-3">
+              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
+
+                <img src="/images/Sample.png" alt=""
+                  className='object-contain' />
+              </div>
+              <div className=''>
                 <h2 className='text-white text-lg '>Tejas</h2>
               </div>
             </div>
@@ -63,121 +80,6 @@ const FriendSplit = () => {
               <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
             </div>
           </div>
-
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Sujal</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Tejas</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Tejas</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Tejas</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Tejas</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-          <div className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
-
-            <div className="flex justify-between w-[6vw] items-center gap-3">
-              <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
-
-                <img src="/images/Sample.png" alt=""
-                  className='object-contain' />
-              </div>
-              <div className=''>
-                <h2 className='text-white text-lg '>Tejas</h2>
-              </div>
-            </div>
-
-            <div className='w-[2vw] h-[4vh] '>
-              <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
-            </div>
-          </div>
-
-
-
 
 
 
@@ -290,10 +192,10 @@ const FriendSplit = () => {
         <>
           <div onClick={() => setisAddModalOpen(false)} className="h-full w-full absolute bg-black/50 top-0 left-0 flex items-center z-[10]">
 
-            <div className="modal justify-center items-center relative bg-[#121944] h-[60vh] w-[33vw] mx-auto rounded-md translate-x-8 translate-y-[-10%] z-[20] px-8 py-6 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+            <div className="modal justify-center items-center relative bg-[#121944] h-[60vh] w-[380px] mx-auto rounded-md translate-x-8 translate-y-[-10%] z-[20] px-8 py-6 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
 
 
-              <div className="min-h-[3vh]  flex flex-col w-[60%] justify-between gap-4  ">
+              <div className="min-h-[3vh]  flex flex-col w-[90%]  gap-4 items-center justify-center  ">
                 <h1 className='text-[30px] translate-y-[-20%] '>Add new friend</h1>
                 <div>
                   <input
@@ -321,7 +223,7 @@ const FriendSplit = () => {
                   />
                 </div>
 
-                <div className='translate-y-[]'>
+                {/* <div className='translate-y-[]'>
                   <label htmlFor="" className='text-[--ternary] text-sm ml-1 translate-y-[15%]'>Avatar</label>
                   <input
                     type="file"
@@ -329,7 +231,7 @@ const FriendSplit = () => {
                     placeholder="Enter total Bill "
                     autoFocus
                   />
-                </div>
+                </div> */}
 
                 <div>
 

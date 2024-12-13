@@ -7,23 +7,23 @@ const Groups = () => {
   const [groups, setGroups] = useState([
     {
       id: 1,
-      name: 'Roommates',
+      name: 'Buddies Corner',
       members: [
-        { id: 1, name: 'Alice', selected: false },
-        { id: 2, name: 'Bob', selected: false },
-        { id: 3, name: 'Charlie', selected: false }
+        { id: 1, name: 'Sujal', selected: false },
+        { id: 2, name: 'Tejas', selected: false },
+        { id: 3, name: 'Yasar', selected: false }
       ],
-      recentBill: 'Utilities'
+      recentBill: 'Restaurant'
     },
-    {
-      id: 2,
-      name: 'Weekend Crew',
-      members: [
-        { id: 4, name: 'David', selected: false },
-        { id: 5, name: 'Eve', selected: false }
-      ],
-      recentBill: 'Dinner'
-    }
+    // {
+    //   id: 2,
+    //   name: 'Weekend Crew',
+    //   members: [
+    //     { id: 4, name: 'David', selected: false },
+    //     { id: 5, name: 'Eve', selected: false }
+    //   ],
+    //   recentBill: 'Dinner'
+    // }
   ]);
 
   const [friends] = useState([
@@ -85,7 +85,7 @@ const Groups = () => {
       }}
     >
       <div className="container mx-auto ">
-        <h1 className="text-2xl font-bold mb-6">Bill Split Groups</h1>
+        <h1 className="text-2xl font-bold mb-6 text-[--heading] text-[27px]">Bill Split Groups</h1>
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
@@ -259,7 +259,7 @@ const Groups = () => {
                 <img src="/images/Sample.png" alt="" />
               </div> */}
               <div>
-                <h1 className='text-white text-[27px] mt-2'> TIGER GANG</h1>
+                <h1 className='text-white text-[27px] mt-2 font-semibold'> Buddies Corner</h1>
               </div>
               <div>
                 {/* <Pencil className='text-[--primary] translate-y-[-50%] translate-x-5 hover:text-purple-600 hover:scale-105  ' /> */}
@@ -319,7 +319,7 @@ const Groups = () => {
                           className='object-contain' />
                       </div>
                       <div className=''>
-                        <h2 className='text-white text-[18px] '>Tejas</h2>
+                        <h2 className='text-white text-[18px] '>Yasar</h2>
                       </div>
                     </div>
                     <div className='w-[100px] text-sm text-[--textred]'>
@@ -337,6 +337,44 @@ const Groups = () => {
                     <button className='hover:scale-105 text-center bg-[--textred] py-2 px-3 w-[7vw] rounded-md text-bold text-white'>
                       <span className='font-semibold'>Paid</span>
                     </button>
+
+
+                    <button
+                      // onClick={() => deleteGroup(group.id)}
+                      className="text-red-500"
+                    >
+                      <TrashIcon size={20} />
+                    </button>
+                  </div>
+                </div>
+                <div className=" card mt-3 w-[100%] bg-[--background] h-[70px] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
+                  <div className=" w-[230px] flex items-center justify-between gap-3">
+
+                    <div className="flex justify-e w-[6vw] items-center gap-3">
+                      <div className='h-[35px] w-[35px] rounded-[30px]  flex justify-center my-auto'>
+
+                        <img src="/images/Sample.png" alt=""
+                          className='object-contain' />
+                      </div>
+                      <div className=''>
+                        <h2 className='text-white text-[18px] '>Sujal</h2>
+                      </div>
+                    </div>
+                    <div className='w-[100px] text-sm text-[--ternary]'>
+                      <span>
+                        You are Even
+                      </span>
+                    </div>
+                    <div className='  '>
+                      <h1 className='text-[--ternary]  text-[18px]'>=</h1>
+                    </div>
+                  </div>
+
+
+                  <div className='flex items-center gap-4'>
+                    {/* <button className='hover:scale-105 text-center bg-[--textred] py-2 px-3 w-[7vw] rounded-md text-bold text-white'>
+                      <span className='font-semibold'>Paid</span>
+                    </button> */}
 
 
                     <button

@@ -5,7 +5,7 @@ const AddIncome = ({ setIncomeOpen }) => {
     return (
         <div onClick={() => setIncomeOpen(false)} className="h-full w-full absolute bg-black/50 top-0 left-0 flex items-center z-[10]">
 
-            <div className="relative bg-[#121944] h-[340px] w-[320px] mx-auto rounded-md translate-x-8 translate-y-[-10%] z-[20] px-8 py-6 flex flex-col items-start gap-3 border-2 border-red-500 border-opacity-45" onClick={(e) => e.stopPropagation()}>
+            <div className="relative bg-[#121944] h-[340px] w-[320px] mx-auto rounded-md translate-x-8 translate-y-[-10%] z-[20] px-8 py-6 flex flex-col items-start gap-3 " onClick={(e) => e.stopPropagation()}>
                 <div className="
                     flex items-center justify-center w-full
                     ">

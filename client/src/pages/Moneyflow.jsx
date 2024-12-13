@@ -23,7 +23,7 @@ const Moneyflow = () => {
           <div className='w-[340px] h-[150px]  mt-4 ml-3 flex gap-4'>
 
 
-            <motion.div onClick={() => setExpensOpen(true)}
+            <motion.div onClick={() => setIncomeOpen(true)}
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -42,7 +42,7 @@ const Moneyflow = () => {
             </motion.div>
 
 
-            <motion.div onClick={() => setIncomeOpen(true)}
+            <motion.div onClick={() => setExpensOpen(true)}
               initial="hidden"
               animate="visible"
               exit="hidden"

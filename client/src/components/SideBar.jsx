@@ -16,7 +16,7 @@ import {
     { name: "groups", icon: <UsersRound />, url: "/groups" },
     { name: "moneyflow", icon: <HandCoins />, url: "/moneyflow" },
     { name: "savings", icon: <PiggyBank />, url: "/savings" },
-    { name: "settings", icon: <Settings />, url: "/settings" },
+    // { name: "settings", icon: <Settings />, url: "/settings" },
   ];
   
   function SideBar({ isLanding }) {
