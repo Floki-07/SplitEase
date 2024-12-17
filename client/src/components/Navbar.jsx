@@ -5,12 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 function NavBar({ isLanding, avatarUrl, setAvatarUrl, user }) {
   const navigate = useNavigate();
-
-  // Update AvatarUrl from localStorage if it changes
-  // useEffect(() => {
-  //   const url = localStorage.getItem("AvatarUrl");
-  //   setAvatarUrl(url || null);
-  // }, []);
+  console.log(avatarUrl);
+  
   const [modalopen, setModalopen] = useState(false)
   const handleModalOpen = () => {
     setModalopen(true)

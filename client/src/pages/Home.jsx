@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import CircularProgressBar from "../components/CircularProgressBar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import PieChartComponent from "../components/PieChart";
+import Onboarding from "../components/Onboarding";
 
 const initialCategories = [
   'Grocery', 'Restaurants', 'Commute', "Bills", 'Stationary', 'Trips', "Micellaneous"
@@ -109,156 +110,126 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
 
     fetchUserData();
   }, [navigate]);
+  console.log(user);
 
   return (
-    <div className="dashboard-container custom-scrollbar">
+   <div className="dashboard-container custom-scrollbar">
       {user ? (
-        // <div className="user-info">
-        //   <div className="user-avatar">
-        //     {/* Display user's avatar or fallback */}
-        //     <img
-        //       src={avatarUrl}
-        //       alt={user?.username || "User Avatar"}
-        //       // style={{ width: '150px', height: '150px', borderRadius: '50%' }}
-        //     />
-        //   </div>
-        //   <div className="user-details">
-        //     <p>Hello, {user?.username || "Guest"}</p>
-        //     <p>Email: {user?.email || "No email available"}</p>
-        //   </div>
-        // </div>
-
-        // Dashboard code
-        <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
-          {/* Header */}
-
-
-          <div id="top" ref={topRef} className="w-full flex justify-between items-center mb-2 mt-3">
-            <h1 className="text-white text-[26px] font-bold">
-              Welcome back <span className=" text-[#3C9A87]">{user?.username}</span>
-            </h1>
-            <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹12,000</h1>
-          </div>
-
-          {/* Main Dashboard Section */}
-          <div className="flex flex-wrap gap-6 justify-start w-[1200px] mt-[60px]">
-            {/* Budget vs Expense */}
-            <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
-              <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
-              <CircularProgressBar percentage={40} title={'Income Used'} />
-
+        user.verified ? (
+          <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
+            {/* Header */}
+            <div id="top" ref={topRef} className="w-full flex justify-between items-center mb-2 mt-3">
+              <h1 className="text-white text-[26px] font-bold">
+                Welcome back <span className="text-[#3C9A87]">{user?.username}</span>
+              </h1>
+              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹12,000</h1>
             </div>
 
-            {/* Monthly Stats */}
-            <div className="bg-[#121944] rounded-lg p-6 flex flex-col w-[350px] justify-start items-center  h-[350px]">
-              <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Monthly Stats</h2>
-              <ul className="space-y-4 text-xl font-normal w-full">
-                <li className="flex justify-between">
-                  <span>Income this month:</span>
-                  <span className="font-bold">₹42,000</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Expense this month:</span>
-                  <span className="font-bold">₹12,000</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Amount owed:</span>
-                  <span className="font-bold">₹1,000</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Amount Spent in <br />Groups:</span>
-                  <span className="font-bold">₹500</span>
-                </li>
-              </ul>
-            </div>
-            {/* <input type="button" onClick={handleScroll} className="bg-red-400" /> */}
+            {/* Main Dashboard Section */}
+            <div className="flex flex-wrap gap-6 justify-start w-[1200px] mt-[60px]">
+              {/* Budget vs Expense */}
+              <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
+                <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
+                <CircularProgressBar percentage={40} title={'Income Used'} />
+              </div>
 
+              {/* Monthly Stats */}
+              <div className="bg-[#121944] rounded-lg p-6 flex flex-col w-[350px] justify-start items-center h-[350px]">
+                <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Monthly Stats</h2>
+                <ul className="space-y-4 text-xl font-normal w-full">
+                  <li className="flex justify-between">
+                    <span>Income this month:</span>
+                    <span className="font-bold">₹42,000</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Expense this month:</span>
+                    <span className="font-bold">₹12,000</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Amount owed:</span>
+                    <span className="font-bold">₹1,000</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Amount Spent in <br />Groups:</span>
+                    <span className="font-bold">₹500</span>
+                  </li>
+                </ul>
+              </div>
 
-            {/* Active Goals */}
-            <div className="bg-[#121944] rounded-lg p-6 w-[430px] text-center  h-[350px]">
-              <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Active Goals</h2>
+              {/* Active Goals */}
+              <div className="bg-[#121944] rounded-lg p-6 w-[430px] text-center h-[350px]">
+                <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Active Goals</h2>
 
-
-              <div className="container savings flex flex-col overflow-y-auto custom-scrollbar   h-[250px] overflow-x-hidden w-[390px]  px-2 gap-2">
-
-                <div className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
-                  <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''}/>
-                  <div className="min-h-[150px] flex justify-center items-center ">
-                    <h1 className="text-[28px] font-semibold tracking-wide"> Buy Iphone </h1 >
+                <div className="container savings flex flex-col overflow-y-auto custom-scrollbar h-[250px] overflow-x-hidden w-[390px] px-2 gap-2">
+                  <div key={crypto.randomUUID()} className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
+                    <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''} />
+                    <div className="min-h-[150px] flex justify-center items-center ">
+                      <h1 className="text-[28px] font-semibold tracking-wide">Buy Iphone</h1>
+                    </div>
                   </div>
-
-                </div>
-                <div className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
-                  <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} />
-                  <div className="min-h-[150px] flex justify-center items-center ">
-
-                    <h1 className="text-[28px] font-semibold tracking-wide"> Buy Continental GT 650 </h1 >
+                  <div className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
+                    <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} />
+                    <div className="min-h-[150px] flex justify-center items-center ">
+                      <h1 className="text-[28px] font-semibold tracking-wide">Buy Continental GT 650</h1>
+                    </div>
                   </div>
-
-                </div>
-
-              </div>
-            </div>
-
-            {/* Scroll Down */}
-            <div className={`flex w-full justify-end ${toggleScrollBtn == false && 'invisible	'}`}>
-              <div
-                onClick={handleScrollDown}
-                className="w-[40px] h-[40px] relative bg-[--ternary] rounded-full flex justify-center items-center " >
-                <ChevronDown className="text-black" size={25} />
-              </div>
-            </div>
-
-
-            {/* Category wise Split */}
-            {/* 
-             */}
-            <div className={`${toggleScrollBtn == true && ''} flex flex-col  items-center w-[98%] rounded-md bg-[--background2] h-[400px] middle mt-[100px]`} id="middle " ref={middleRef}>
-
-            <div className=" flex justify-between items-center mb-2 mt-1">
-               <h1 className="text-white text-[26px] font-bold">
-                <span className="text-[--heading]">Category Wise Split</span>
-              </h1> 
-            </div>
-
-
-
-              <div className="flex">
-              <div className="w-[50%]  h-[400px] ">
-              <PieChartComponent/>
-              </div>
-              <div className="w-[60%] pl-10 h-[400px] ">
-                <div className="category p-2 container w-[100%] mx-auto pl-20  h-[80%] my-4 gap-2 flex flex-wrap border-l border-white border-opacity-20">
-
-                  {
-                    categories.map((item) => (
-                      <div className="w-[150px] rounded-md px-1 h-[90px] bg-[--background3] z-10 gap-2 flex flex-col justify-start items-start">
-                        <h1 className="text-[--primary] text-[24px] font-semibold">{item}</h1>
-                        <span className="ml-1 text-[17px] font-normarl">Rs.1000</span>
-                      </div>
-
-
-
-                    ))
-                  }
-
-
-
                 </div>
               </div>
-              </div>
-            </div>
 
-            {/* Scroll Up */}
-            <div className="flex w-full justify-end mb-[100px]">
-              <div
-                onClick={handleScrollUp}
-                className="w-[40px] h-[40px] relative bg-[--ternary] rounded-full flex justify-center items-center " >
-                <ChevronUp className="text-black" size={25} />
+              {/* Scroll Down */}
+              {toggleScrollBtn !== false && (
+                <div className="flex w-full justify-end">
+                  <div
+                    onClick={handleScrollDown}
+                    className="w-[40px] h-[40px] relative bg-[--ternary] rounded-full flex justify-center items-center"
+                  >
+                    <ChevronDown className="text-black" size={25} />
+                  </div>
+                </div>
+              )}
+
+              {/* Category wise Split */}
+              <div className="flex flex-col items-center w-[98%] rounded-md bg-[--background2] h-[400px] middle mt-[100px]" id="middle" ref={middleRef}>
+                <div className="flex justify-between items-center mb-2 mt-1">
+                  <h1 className="text-white text-[26px] font-bold">
+                    <span className="text-[--heading]">Category Wise Split</span>
+                  </h1>
+                </div>
+
+                <div className="flex">
+                  <div className="w-[50%] h-[400px]">
+                    <PieChartComponent />
+                  </div>
+                  <div className="w-[60%] pl-10 h-[400px]">
+                    <div className="category p-2 container w-[100%] mx-auto pl-20 h-[80%] my-4 gap-2 flex flex-wrap border-l border-white border-opacity-20">
+                      {categories.map((item, index) => (
+                        <div 
+                          key={index} 
+                          className="w-[150px] rounded-md px-1 h-[90px] bg-[--background3] z-10 gap-2 flex flex-col justify-start items-start"
+                        >
+                          <h1 className="text-[--primary] text-[24px] font-semibold">{item}</h1>
+                          <span className="ml-1 text-[17px] font-normal">Rs.1000</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Scroll Up */}
+              <div className="flex w-full justify-end mb-[100px]">
+                <div
+                  onClick={handleScrollUp}
+                  className="w-[40px] h-[40px] relative bg-[--ternary] rounded-full flex justify-center items-center"
+                >
+                  <ChevronUp className="text-black" size={25} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div><Onboarding/></div>
+        )
       ) : (
         <div>
           <p>Loading user info...</p>

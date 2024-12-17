@@ -129,4 +129,61 @@ router.post('/login', async (req, res) => {
     }
 });
 
+
+router.post('/onboardingdetails',protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+            console.log('Inside OAuth block, user ID:', userId);
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+
+            // console.log("Authorization Header:", authHeader);
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+                console.log('Token-based user, user ID:', userId);
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                // return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+
+        // Validate and extract budget value from the request body
+        const { budget } = req.body;
+
+        // Update user details in the database
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: { budget, verified: true } }, // Update budget and reset verified to false
+            { new: true } // Return the updated user document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        console.log('updated user:', updatedUser);
+        res.status(200).json({
+            success: true,
+            message: 'Onboarding details updated successfully',
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error('Error updating onboarding details:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+
+
+
 module.exports = router;
