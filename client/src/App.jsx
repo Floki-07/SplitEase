@@ -41,6 +41,8 @@ const AppLayout = () => {
 
   // Global States
   const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('AvatarUrl')); // Fallback avatar
+ 
+  
   if (avatarUrl == null) {
     setAvatarUrl('/images/Profile.jpg')
   }
