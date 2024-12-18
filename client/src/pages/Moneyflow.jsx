@@ -1,13 +1,135 @@
 import { Wallet, HandCoins } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import AddExpense from '../components/AddExpense'
 import AddIncome from '../components/AddIncome'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
 
 const Moneyflow = () => {
   const [ExpensOpen, setExpensOpen] = useState(false)
   const [IncomeOpen, setIncomeOpen] = useState(false)
+  const [user, setUser] = useState('')
+  const navigate = useNavigate()
+  
+  
+  
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        let response;
+        if (token) {
+          // Token-based login attempt
+          try {
+            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (response.data.user) {
+              setUser(response.data.user);
+              console.log(response.data.user);
+
+              return;
+            }
+          } catch (tokenError) {
+            console.error("Token validation failed:", tokenError);
+            localStorage.removeItem("token");
+          }
+        }
+
+        // OAuth login attempt
+        try {
+          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(),
+            },
+          });
+
+          if (response.data.user) {
+            setUser(response.data.user);
+            console.log(response.data.user);
+          } else {
+            throw new Error("No user data received");
+          }
+        } catch (oauthError) {
+          console.error("OAuth login failed:", oauthError);
+
+        }
+      } catch (error) {
+        console.error("Critical error in fetchUserData:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        let response;
+        if (token) {
+          // Token-based login attempt
+          try {
+            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (response.data.user) {
+              setUser(response.data.user);
+              console.log(response.data.user);
+
+              return;
+            }
+          } catch (tokenError) {
+            console.error("Token validation failed:", tokenError);
+            localStorage.removeItem("token");
+          }
+        }
+
+        // OAuth login attempt
+        try {
+          response = await axios.get(`http://localhost:3000/auth/login/success`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(),
+            },
+          });
+
+          if (response.data.user) {
+            setUser(response.data.user);
+            console.log(response.data.user);
+          } else {
+            throw new Error("No user data received");
+          }
+        } catch (oauthError) {
+          console.error("OAuth login failed:", oauthError);
+
+        }
+      } catch (error) {
+        console.error("Critical error in fetchUserData:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
+
+
   const modalVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -67,14 +189,14 @@ const Moneyflow = () => {
             <div>
               <h1 className='ml-10 mt-7 text-[26px] text-[--ternary]'>Recent Transactions</h1>
             </div>
-            <div className="overflow-x-auto mt-4 mx-10">
+            <div className="overflow-x-hidden mt-4 mx-10 overflow-hidden">
               <motion.table
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
                 variants={modalVariants}
                 transition={{ duration: 0.5 }}
-                className="w-full text-sm table-auto border border-gray-500 border-opacity-45">
+                className="w-full text-sm table-auto border border-gray-500 border-opacity-45 ">
                 <thead className="bg-[--background] ">
                   <tr className='text-white'>
                     <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Name</th>
@@ -85,41 +207,18 @@ const Moneyflow = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-t border-gray-200 border-opacity-25 bg-[--background2]">
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Ziyad</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Samosa Chaat</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">23/11/24</td>
-                    <td className="px-4 py-2 text-red-500 border-x border-gray-500 border-opacity-45">-40</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Food</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 border-opacity-25">
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Ziyad</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Samosa Chaat</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">23/11/24</td>
-                    <td className="px-4 py-2 text-red-500 border-x border-gray-500 border-opacity-45">-40</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Food</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 border-opacity-25 bg-[--background2]">
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Ziyad</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Samosa Chaat</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">23/11/24</td>
-                    <td className="px-4 py-2 text-red-500 border-x border-gray-500 border-opacity-45">-40</td>
-                    <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Food</td>
-                  </tr>
-                  {/* <tr className="border-t border-gray-200">
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Tejas</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Egg Rice</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">22/11/24</td>
-                  <td className="px-4 py-2 text-green-500 border-x border-gray-500 border-opacity-45">+60</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Food</td>
-                </tr>
-                <tr className="border-t border-gray-200">
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Ziyad</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Paid to Yasar</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">21/11/24</td>
-                  <td className="px-4 py-2 text-red-500 border-x border-gray-500 border-opacity-45">-160</td>
-                  <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">Payment</td>
-                </tr> */}
+                  {user?.transactions &&
+                    user?.transactions.map((ele, index) => (
+                      <tr key={index} className="border-t border-gray-200 border-opacity-25 bg-[--background2]">
+                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">{user.username}</td>
+                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">{ele.description}</td>
+                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">{ele.date}</td>
+                        <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 ${ele.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                          {ele.amount}
+                        </td>
+                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45">{ele.category || 'N/A'}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </motion.table>
 
@@ -137,7 +236,10 @@ const Moneyflow = () => {
         <AddExpense setExpensOpen={setExpensOpen} />
       )}
       {IncomeOpen && (
-        <AddIncome setIncomeOpen={setIncomeOpen} />
+        <AddIncome
+          user={user}
+          setUser={setUser}
+          setIncomeOpen={setIncomeOpen} />
       )}
     </>
 
