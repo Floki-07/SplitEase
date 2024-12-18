@@ -17,7 +17,8 @@ const protectRoute = async (req, res, next) => {
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+      console.log(decoded);
+      
       // Find user by ID from token, exclude password
       req.user = await User.findById(decoded.userId).select('-password');
 
@@ -39,9 +40,9 @@ const protectRoute = async (req, res, next) => {
   }
 
   // If no authentication methods work
-  return res.status(401).json({ 
-    message: 'Not authorized, no token or active session' 
-  });
+  // return res.status(401).json({ 
+  //   message: 'Not authorized, no token or active session' 
+  // });
 };
 
 // Optional: Role-based access control

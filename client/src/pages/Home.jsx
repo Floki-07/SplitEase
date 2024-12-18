@@ -110,7 +110,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
 
     fetchUserData();
   }, [navigate]);
-  console.log(user);
+  // console.log(user);
 
   return (
    <div className="dashboard-container custom-scrollbar">
@@ -139,19 +139,23 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
                 <ul className="space-y-4 text-xl font-normal w-full">
                   <li className="flex justify-between">
                     <span>Income this month:</span>
-                    <span className="font-bold">₹42,000</span>
+                    <span className="font-bold">{user.totalincome}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Expense this month:</span>
-                    <span className="font-bold">₹12,000</span>
+                    <span className="font-bold">{user.totalexpense}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Your budget:</span>
+                    <span className="font-bold">{user.budget}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Amount owed:</span>
-                    <span className="font-bold">₹1,000</span>
+                    <span className="font-bold">{user.amountowed}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Amount Spent in <br />Groups:</span>
-                    <span className="font-bold">₹500</span>
+                    <span className="font-bold">{user.amountspent}</span>
                   </li>
                 </ul>
               </div>

@@ -2,16 +2,20 @@ const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
-    groupName: { 
-        type: mongoose.Schema.Types.ObjectId, 
+    groupName: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',
     },
-    friendName: { 
-        type: mongoose.Schema.Types.ObjectId, 
+    friendName: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Friend',
     },
+    type: {
+        type: String,
+        enum: ['income', 'expense'], // Type can only be 'income' or 'expense'
+    },
     date: { type: Date, default: Date.now },
-    category: { type: String, required: true }, // e.g., grocery, commute, etc.
+    category: { type: String, }, // e.g., grocery, commute, etc.
     description: { type: String },
     moneySpent: { type: Number, default: 0 },
 }, { timestamps: true });

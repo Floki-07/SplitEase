@@ -12,8 +12,7 @@ const userSchema = new mongoose.Schema({
     balance: { type: Number, default: 0 },
     amountowed: { type: Number, default: 0 },
     amountspent: { type: Number, default: 0 },
-    budget:{type:Number,default:0},
-    
+    budget: { type: Number, default: 0 },
     groups: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',
@@ -26,11 +25,11 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Goal',
     }],
-
-    trasactions: [
+    
+    transactions: [  // Fixed the spelling here
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Transaction'
+            ref: 'Transaction',
         }
     ],
 
@@ -43,13 +42,11 @@ const userSchema = new mongoose.Schema({
         trips: { type: Number, default: 0 },
         micellaneous: { type: Number, default: 0 },
     },
-    
-    verified: {type:Boolean,default:false},
 
-
+    verified: { type: Boolean, default: false },
 
 }, { timestamps: true });
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

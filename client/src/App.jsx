@@ -28,7 +28,7 @@ import Dashboard from './pages/Dashboard'
 const AppLayout = () => {
   const [isLanding, setIsLanding] = useState(false)
   const location = useLocation()
-  console.log(location.pathname);
+
 
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === '/signup' || location.pathname === '/login') {
@@ -67,7 +67,7 @@ const AppLayout = () => {
           <Route path="/split/friendsplit" element={<AuthHOC><FriendSplit /></AuthHOC>} />
           <Route path="/split/groupsplit" element={<AuthHOC><GroupSplit /></AuthHOC>} />
           <Route path="/split/billsplit/:id" element={<AuthHOC><BillSplit /></AuthHOC>} />
-          <Route path="/moneyflow" element={<AuthHOC><Moneyflow /></AuthHOC>} />
+          <Route path="/moneyflow" element={<AuthHOC><Moneyflow user={user} setUser={setUser} /></AuthHOC>} />
           <Route path="/savings" element={<AuthHOC><SavingsGoals /></AuthHOC>} />
           <Route path="/settings" element={<AuthHOC><SettingsPage /></AuthHOC>} />
           <Route path="*" element={<Error />} />
