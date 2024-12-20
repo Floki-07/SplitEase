@@ -15,23 +15,53 @@ const router = express.Router();
 
 
 router.get('/getUserInfo', protectRoute, async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
+    // const token = req.headers.authorization?.split(' ')[1];
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
+    // if (!token) {
+    //     return res.status(401).json({ error: 'No token provided' });
+    // }
+    // try {
+    //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //     const user = await User.findById(decoded.userId).populate('transactions');
 
-        if (user) {
-            res.status(200).json({ user });
-        } else {
-            res.status(404).json({ error: 'User not found' });
+    //     if (user) {
+    //         res.status(200).json({ user });
+    //     } else {
+    //         res.status(404).json({ error: 'User not found' });
+    //     }
+    // } catch (error) {
+    //     console.error('Token verification failed:', error);
+    //     res.status(401).json({ error: 'Invalid token' });
+    // }
+    let userId;
+
+    // Determine user authentication type (OAuth or token-based)
+    if (req.user) {
+        // OAuth-based user
+        userId = req.user._id;
+        console.log('Inside OAuth block, user ID:', userId);
+    } else {
+        // Token-based user
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'No token provided' });
         }
-    } catch (error) {
-        console.error('Token verification failed:', error);
-        res.status(401).json({ error: 'Invalid token' });
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            userId = decoded.userId;
+            console.log('Token-based user, user ID:', userId);
+        } catch (error) {
+            console.error('JWT verification failed:', error);
+            return res.status(401).json({ success: false, message: 'Invalid token' });
+        }
+    }
+    const user = await User.findById(userId).populate('transactions');
+    if (user) {
+        res.status(200).json({ user });
+    } else {
+        res.status(404).json({ error: 'User not found' });
     }
 });
 
@@ -212,8 +242,8 @@ router.post('/addincome', protectRoute, async (req, res) => {
         }
 
         // Validate and extract transaction data from the request body
-        const { income, description, date } = req.body;
-        console.log( income, description, date);
+        const { income, description, date } = req.body.obj;
+        console.log(income, description, date);
 
 
 

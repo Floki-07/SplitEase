@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
-    amount: { type: Number, required: true },
+    amount: { type: Number },
     groupName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Group',

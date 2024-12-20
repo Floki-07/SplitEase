@@ -21,7 +21,6 @@ const protectRoute = async (req, res, next) => {
       
       // Find user by ID from token, exclude password
       req.user = await User.findById(decoded.userId).select('-password');
-
       // If user found, proceed to next middleware
       if (req.user) {
         return next();

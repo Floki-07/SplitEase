@@ -12,7 +12,7 @@ const AddIncome = ({ setIncomeOpen,user,setUser }) => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIncomeOpen(false);
     // Here you can handle the logic to save the income, description, and date
     console.log('Income:', income);
     console.log('Description:', description);
@@ -86,7 +86,7 @@ const AddIncome = ({ setIncomeOpen,user,setUser }) => {
     setDate('');
 
     // Close the income modal after submission
-    setIncomeOpen(false);
+   
   };
 
   return (
