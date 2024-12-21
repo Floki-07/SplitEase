@@ -50,6 +50,8 @@ passport.use(new GoogleStrategy({
                 
                 // Attach token to user object
                 user.token = token;
+         
+                
             } else {
                 user = await User.findOneAndUpdate(
                     { email: profile.emails?.[0]?.value }, // Query condition to match the user by email

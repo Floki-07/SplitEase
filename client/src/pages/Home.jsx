@@ -90,6 +90,8 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
 
           if (response.data.user) {
             setUser(response.data.user);
+            console.log(response.data.user.token);
+            
             if (response.data.user.avatar) {
               localStorage.setItem("AvatarUrl", response.data.user.avatar);
               setAvatarUrl(response.data.user.avatar);

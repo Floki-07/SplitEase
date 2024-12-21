@@ -13,7 +13,7 @@ const Moneyflow = () => {
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState('')
   const navigate = useNavigate()
-  
+
   useEffect(() => {
     const fetchUserData = async () => {
       // setLoading(true)
@@ -51,7 +51,7 @@ const Moneyflow = () => {
 
           if (response.data.user) {
             setUser(response.data.user);
-            console.log('Oauth user data',response.data.user);
+            console.log('Oauth user data', response.data.user);
           } else {
             throw new Error("No user data received");
           }
@@ -124,7 +124,7 @@ const Moneyflow = () => {
                 exit="hidden"
                 variants={modalVariants}
                 transition={{ duration: 0.5 }}
-                className="w-full text-sm table-auto border border-gray-500 border-opacity-45 h-[400px]">
+                className="w-full text-sm table-auto border border-gray-500 border-opacity-45 min-h-[100px] max-h-[400px]  ">
                 <thead className="bg-[--background]  border-gray-500 border-opacity-45">
                   <tr className='text-white '>
                     <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Name</th>
@@ -134,7 +134,7 @@ const Moneyflow = () => {
                     <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Category</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className='text-[--ternary] pr-3'>
                   {loading ? (
                     <tr>
                       <td colSpan="5" className="text-center py-4">
@@ -150,7 +150,10 @@ const Moneyflow = () => {
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.description}</td>
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.date}</td>
                         <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate ${ele.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                          {ele.amount}
+                        <div className='flex'>
+                        {ele.type === 'income' ? <div>+</div> : <div>-</div>}
+                        {ele.amount}
+                        </div>
                         </td>
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.category || 'N/A'}</td>
                       </tr>
@@ -170,7 +173,10 @@ const Moneyflow = () => {
       </div>
 
       {ExpensOpen && (
-        <AddExpense setExpensOpen={setExpensOpen} />
+        <AddExpense
+          user={user}
+          setUser={setUser}
+          setExpensOpen={setExpensOpen} />
       )}
       {IncomeOpen && (
         <AddIncome

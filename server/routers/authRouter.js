@@ -15,26 +15,7 @@ const router = express.Router();
 
 
 router.get('/getUserInfo', protectRoute, async (req, res) => {
-    // const token = req.headers.authorization?.split(' ')[1];
-
-    // if (!token) {
-    //     return res.status(401).json({ error: 'No token provided' });
-    // }
-    // try {
-    //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    //     const user = await User.findById(decoded.userId).populate('transactions');
-
-    //     if (user) {
-    //         res.status(200).json({ user });
-    //     } else {
-    //         res.status(404).json({ error: 'User not found' });
-    //     }
-    // } catch (error) {
-    //     console.error('Token verification failed:', error);
-    //     res.status(401).json({ error: 'Invalid token' });
-    // }
     let userId;
-
     // Determine user authentication type (OAuth or token-based)
     if (req.user) {
         // OAuth-based user
@@ -253,6 +234,70 @@ router.post('/addincome', protectRoute, async (req, res) => {
             amount: income,
             description,
             date,
+            user: userId,
+        });
+
+        // Push the new transaction into the user's transactions array
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $push: { transactions: newTransaction._id } },
+            { new: true }
+        ).populate('transactions'); // Populate the transactions array with transaction details
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        console.log('Updated user:', updatedUser);
+        res.status(200).json({
+            success: true,
+            message: 'Transaction added successfully',
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+router.post('/addexpense', protectRoute, async (req, res) => {
+    try {
+        let userId;
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+            console.log('Inside OAuth block, user ID:', userId);
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+                console.log('Token-based user, user ID:', userId);
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+
+        // Validate and extract transaction data from the request body
+        let { expense, description, date, category } = req.body.expenseData;
+        console.log(expense, description, date, category);
+        
+
+
+        // Create a new transaction document
+        const newTransaction = await Transaction.create({
+            type: 'expense',
+            amount: expense,
+            description,
+            date,
+            category,
             user: userId,
         });
 
