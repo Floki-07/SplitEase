@@ -8,19 +8,24 @@ const passport = require('passport');
 const session = require('express-session');
 const User = require('../models/UserModel')
 const Transaction = require('../models/TransactionModel')
+const Goal=require('../models/GoalModel')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-
-
+// const {
+//     getGoals,
+//     createGoal,
+//     updateGoal,
+//     deleteGoal,
+//     getGoalStats
+// } = require('../controllers/goalController');
 router.get('/getUserInfo', protectRoute, async (req, res) => {
     let userId;
     // Determine user authentication type (OAuth or token-based)
     if (req.user) {
         // OAuth-based user
         userId = req.user._id;
-        console.log('Inside OAuth block, user ID:', userId);
     } else {
         // Token-based user
         const token = req.headers.authorization?.split(' ')[1];
@@ -32,13 +37,12 @@ router.get('/getUserInfo', protectRoute, async (req, res) => {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             userId = decoded.userId;
-            console.log('Token-based user, user ID:', userId);
         } catch (error) {
             console.error('JWT verification failed:', error);
             return res.status(401).json({ success: false, message: 'Invalid token' });
         }
     }
-    const user = await User.findById(userId).populate('transactions');
+    const user = await User.findById(userId).populate('transactions goals');
     if (user) {
         res.status(200).json({ user });
     } else {
@@ -46,6 +50,34 @@ router.get('/getUserInfo', protectRoute, async (req, res) => {
     }
 });
 
+router.get('/isLoggedIn', (req, res) => {
+    // Check for user from OAuth (e.g., req.user)
+    if (req.isAuthenticated()) {
+        const user = req.user;
+        return res.json({
+            isValid: true,
+            userId: user._id,
+            email: user.email,
+            loginMethod: 'oauth'
+        });
+    }
+    // Check for JWT token from email-password login
+    const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+    // console.log('Token', token);
+
+    if (token) {
+        try {
+            // Verify the token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET); // Use the same secret as used during token creation
+            return res.json({ isValid: true, userId: decoded.userId });
+        } catch (err) {
+            console.error('Token verification failed:', err);
+            return res.status(401).json({ isValid: false, message: 'Invalid token.' });
+        }
+    }
+    // If no valid login is found
+    return res.status(401).json({ isValid: false, message: 'User not logged in.' });
+});
 
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -235,7 +267,7 @@ router.post('/addincome', protectRoute, async (req, res) => {
             type: 'income',
             amount: income,
             description,
-            date:updateddate,
+            date: updateddate,
             user: userId,
         });
 
@@ -245,7 +277,7 @@ router.post('/addincome', protectRoute, async (req, res) => {
             { $push: { transactions: newTransaction._id } },
             { new: true }
         ).populate('transactions'); // Populate the transactions array with transaction details
-        updatedUser.totalincome=parseInt(updatedUser.totalincome)+parseInt(income);
+        updatedUser.totalincome = parseInt(updatedUser.totalincome) + parseInt(income);
         updatedUser.save();
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -263,7 +295,7 @@ router.post('/addincome', protectRoute, async (req, res) => {
     }
 });
 
-router.post('/addexpense',protectRoute, async (req, res) => {
+router.post('/addexpense', protectRoute, async (req, res) => {
     try {
         let userId;
 
@@ -274,8 +306,8 @@ router.post('/addexpense',protectRoute, async (req, res) => {
         } else {
             // Token-based user
             const token = req.headers.authorization?.split(' ')[1];
-    
-            
+
+
             if (!token) {
                 return res.status(401).json({ success: false, message: 'No token provided' });
             }
@@ -292,7 +324,7 @@ router.post('/addexpense',protectRoute, async (req, res) => {
         }
         // Validate and extract transaction data from the request body
         let { expense, description, date, category } = req.body.expenseData;
-        let updateddate=date.split('T')[0];
+        let updateddate = date.split('T')[0];
         // Retrieve the user to validate totalincome and totalexpense
         let user = await User.findById(userId).populate('transactions');
         console.log(user);
@@ -301,7 +333,7 @@ router.post('/addexpense',protectRoute, async (req, res) => {
         }
 
         // Check if totalincome is sufficient for the new expense
-        const currExpense =  parseInt(expense);
+        const currExpense = parseInt(expense);
         if (user.totalincome < currExpense) {
             return res.status(403).json({
                 success: false,
@@ -314,7 +346,7 @@ router.post('/addexpense',protectRoute, async (req, res) => {
             type: 'expense',
             amount: expense,
             description,
-            date:updateddate,
+            date: updateddate,
             category,
             user: userId,
         });
@@ -332,6 +364,63 @@ router.post('/addexpense',protectRoute, async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Transaction added successfully',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+
+router.post('/addgoal', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+        // Validate and extract transaction data from the request body
+        let { goalName, amount, date } = req.body.goal;
+        
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        // Create a new gaol document
+        const newgoal = await Goal.create({
+            name:goalName,
+            target:amount,
+            deadline:date,
+            userId
+          });
+      
+        user.goals.push(newgoal._id);
+        user.save()
+        // Repopulate the transactions array after saving
+        user = await User.findById(userId).populate('goals');
+
+        console.log('Updated user:', user);
+        res.status(200).json({
+            success: true,
+            message: 'Goal added successfully',
             user,
         });
     } catch (error) {
