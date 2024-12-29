@@ -51,7 +51,7 @@ const AppLayout = () => {
 
   return (
     <div className='bg-[--background  ] h-screen text-[--primary]'>
-      <Navbar isLanding={isLanding} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user} />
+      <Navbar isLanding={isLanding} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user}  setUser={setUser}/>
       <div className='flex h-[calc(100%-60px)] custom-scrollbar'>
         <SideBar isLanding={isLanding} />
         <Routes>

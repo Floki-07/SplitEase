@@ -16,7 +16,7 @@ const Moneyflow = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      // setLoading(true)
+      setLoading(true)
       try {
         const token = localStorage.getItem("token");
 
@@ -61,7 +61,7 @@ const Moneyflow = () => {
       } catch (error) {
         console.error("Critical error in fetchUserData:", error);
       } finally {
-        // setLoading(false)  
+        setLoading(false)   
       }
     };
 
@@ -148,7 +148,7 @@ const Moneyflow = () => {
                       <tr key={index} className="border-t border-gray-200 border-opacity-25 bg-[--background2] h-[50px]">
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{user.username}</td>
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.description}</td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.date}</td>
+                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.date.split('T')[0]}</td>
                         <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate ${ele.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
                         <div className='flex'>
                         {ele.type === 'income' ? <div>+</div> : <div>-</div>}

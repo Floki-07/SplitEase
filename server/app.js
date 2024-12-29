@@ -51,10 +51,7 @@ app.get("/auth/google/callback", passport.authenticate("google", {
 app.get('/auth/login/success', async (req, res) => {
   if (req.isAuthenticated()) 
   {
-
-    
-    const token=req.token;
-    
+    // const token=req.token; 
     res.status(200).json({
       success: true,
       message: "successful",

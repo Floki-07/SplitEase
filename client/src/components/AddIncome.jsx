@@ -70,6 +70,8 @@ const AddIncome = ({ setIncomeOpen,user,setUser }) => {
 
             if (response.data.success) {
                 setUser(response.data.user)
+                console.log(response.data.user);
+                
                 console.log("Income added:", response.data.message);
             } else {
                 throw new Error("No success response received for OAuth onboarding");

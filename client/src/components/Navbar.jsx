@@ -3,11 +3,11 @@ import { X, CircleUser, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function NavBar({ isLanding, avatarUrl, setAvatarUrl, user }) {
+function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
   const navigate = useNavigate();
-  console.log(avatarUrl);
   
   const [modalopen, setModalopen] = useState(false)
+
   const handleModalOpen = () => {
     setModalopen(true)
   }
@@ -23,6 +23,62 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user }) {
       alert("Failed to log out. Please try again.");
     }
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // setLoading(true)
+      try {
+        const token = localStorage.getItem("token");
+
+        let response;
+        if (token) {
+          try {
+            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (response.data.user) {
+              setUser(response.data.user);
+              console.log(response.data.user);
+              return;
+            }
+          } catch (tokenError) {
+            console.error("Token validation failed:", tokenError);
+            localStorage.removeItem("token");
+          }
+        }
+
+        try {
+          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(),
+            },
+          });
+
+          if (response.data.user) {
+            setUser(response.data.user);
+            console.log('Oauth user data', response.data.user);
+          } else {
+            throw new Error("No user data received");
+          }
+        } catch (oauthError) {
+          console.error("OAuth login failed:", oauthError);
+        }
+      } catch (error) {
+        console.error("Critical error in fetchUserData:", error);
+      } finally {
+        // setLoading(false)  
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
 
   return (
     <div
@@ -42,12 +98,10 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user }) {
           (<>
             <div className="w-[50px] h-[50px] relative" onClick={handleModalOpen}>
               <img
-                src={avatarUrl}
+                src={user?.avatar}
                 alt="Avatar"
                 className="h-[50px] w-[50px] rounded-full"
-              // onError={(e) => {
-              //   e.target.src = "/images/Sample.png";
-              // }}
+             
               />
 
             </div>
@@ -61,7 +115,7 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user }) {
                   <div className="w-full flex flex-col gap-3  text-[--ternary] font-semibold justify-center items-center">
                     <div className="w-[70px] h-[70px] relative mx-auto" onClick={handleModalOpen}>
                       <img
-                        src={avatarUrl}
+                        src={user?.avatar}
                         alt="Avatar"
                         className="h-[70px] w-[70px] rounded-full"
                       // onError={(e) => {

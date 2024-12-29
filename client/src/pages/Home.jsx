@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { parsePath, useNavigate } from "react-router-dom";
 
 import CircularProgressBar from "../components/CircularProgressBar";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -20,7 +20,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
   const navigate = useNavigate()
   const middleRef = useRef(null); // Create a ref for the target element
   const topRef = useRef(null); // Create a ref for the target element
-
+  const [expenseIncomePercentage, setExpenseIncomePercentage] = useState()
   // const handleScrollDown = () => {
   //   if (middleRef.current) {
   //     middleRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
@@ -53,10 +53,9 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         let response;
+
         if (token) {
-          // Token-based login attempt
           try {
             response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
               headers: {
@@ -65,10 +64,16 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             });
 
             if (response.data.user) {
-              setUser(response.data.user);
-              if (response.data.user.avatar) {
-                localStorage.setItem("AvatarUrl", response.data.user.avatar);
-                setAvatarUrl(response.data.user.avatar);
+              const userData = response.data.user;
+              setUser(userData);
+              const resultPercent = userData.totalincome
+                ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.budget)) *100
+                : 0;
+              setExpenseIncomePercentage(resultPercent);
+
+              if (userData.avatar) {
+                localStorage.setItem("AvatarUrl", userData.avatar);
+                setAvatarUrl(userData.avatar);
               }
               return;
             }
@@ -89,33 +94,38 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
           });
 
           if (response.data.user) {
-            setUser(response.data.user);
-            console.log(response.data.user.token);
-            
-            if (response.data.user.avatar) {
-              localStorage.setItem("AvatarUrl", response.data.user.avatar);
-              setAvatarUrl(response.data.user.avatar);
+            const userData = response.data.user;
+            setUser(userData);
+            const resultPercent = userData.totalincome
+              ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.totalincome)) * 100
+              : 0;
+            setExpenseIncomePercentage(resultPercent);
+
+            if (userData.avatar) {
+              localStorage.setItem("AvatarUrl", userData.avatar);
+              setAvatarUrl(userData.avatar);
             }
           } else {
             throw new Error("No user data received");
           }
         } catch (oauthError) {
           console.error("OAuth login failed:", oauthError);
-          navigate('/login');
+          navigate("/login");
         }
       } catch (error) {
         console.error("Critical error in fetchUserData:", error);
         localStorage.removeItem("token");
-        navigate('/login');
+        navigate("/login");
       }
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, [navigate, setAvatarUrl, setUser]);
+
   // console.log(user);
 
   return (
-   <div className="dashboard-container custom-scrollbar">
+    <div className="dashboard-container custom-scrollbar">
       {user ? (
         user.verified ? (
           <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
@@ -124,7 +134,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
               <h1 className="text-white text-[26px] font-bold">
                 Welcome back <span className="text-[#3C9A87]">{user?.username}</span>
               </h1>
-              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹12,000</h1>
+              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹ {user.totalincome}</h1>
             </div>
 
             {/* Main Dashboard Section */}
@@ -132,7 +142,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
               {/* Budget vs Expense */}
               <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
                 <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
-                <CircularProgressBar percentage={40} title={'Income Used'} />
+                <CircularProgressBar percentage={Math.round(expenseIncomePercentage)} title={'Income Used'} />
               </div>
 
               {/* Monthly Stats */}
@@ -209,8 +219,8 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
                   <div className="w-[60%] pl-10 h-[400px]">
                     <div className="category p-2 container w-[100%] mx-auto pl-20 h-[80%] my-4 gap-2 flex flex-wrap border-l border-white border-opacity-20">
                       {categories.map((item, index) => (
-                        <div 
-                          key={index} 
+                        <div
+                          key={index}
                           className="w-[150px] rounded-md px-1 h-[90px] bg-[--background3] z-10 gap-2 flex flex-col justify-start items-start"
                         >
                           <h1 className="text-[--primary] text-[24px] font-semibold">{item}</h1>
@@ -234,7 +244,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             </div>
           </div>
         ) : (
-          <div><Onboarding/></div>
+          <div><Onboarding /></div>
         )
       ) : (
         <div>

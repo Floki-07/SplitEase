@@ -3,66 +3,73 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthHOC = ({ children }) => {
-  
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkLoggedIn = async () => {
-      const token = localStorage.getItem('token');
-
+    const checkAuth = async () => {
       try {
-        // First, try OAuth login check
-        if (!token) {
-          const response = await axios.get('http://localhost:3000/auth/login/success', {
-            withCredentials: true,
-            headers: { 'Content-Type': 'application/json' },
-            timeout: 5000
-          });
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
 
-          if (response.data?.success) {
-            localStorage.setItem('token', response.data.token || '');
+        if (token) {
+          // Validate token-based user
+          const response = await axios.get(
+            "http://localhost:3000/api/isLoggedIn",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              withCredentials: true, // If cookies/session are required
+              timeout: 5000,
+            }
+          );
+
+          if (response.data?.isValid) {
             setIsAuthenticated(true);
           } else {
+            localStorage.removeItem("token");
             setIsAuthenticated(false);
-            navigate('/login');
+            navigate("/login");
           }
         } else {
-          // Fallback to token-based validation
-          const response = await axios.get('http://localhost:3000/api/isLoggedIn', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            timeout: 5000
-          });
+          // Validate OAuth user
+          const response = await axios.get(
+            "http://localhost:3000/auth/login/success",
+            {
+              withCredentials: true,
+              headers: { "Content-Type": "application/json" },
+              timeout: 5000,
+            }
+          );
 
-          if (response.data.isValid) {
+          if (response.data?.success) {
+            // Optionally store OAuth token in localStorage (if provided)
+            if (response.data.token) {
+              // localStorage.setItem("token", response.data.token);
+            }
             setIsAuthenticated(true);
           } else {
-            localStorage.removeItem('token');
             setIsAuthenticated(false);
-            navigate('/login');
+            navigate("/login");
           }
         }
       } catch (error) {
-        console.error('Authentication error:', error);
-        localStorage.removeItem('token');
+        console.error("Authentication error:", error);
         setIsAuthenticated(false);
-        navigate('/login');
+        navigate("/login");
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkLoggedIn();
+    checkAuth();
   }, [navigate]);
 
-
-
   // Rendering logic
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div>Loading...</div>
@@ -78,8 +85,7 @@ const AuthHOC = ({ children }) => {
     );
   }
 
-  return <>
-    {isAuthenticated && <>{children}</>}
-  </>;
+  return <>{children}</>;
 };
+
 export default AuthHOC;

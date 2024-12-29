@@ -199,11 +199,11 @@ router.post('/addincome', protectRoute, async (req, res) => {
     try {
         let userId;
 
-        // Determine user authentication type (OAuth or token-based)
+        // Determine user authentication type (OA uth or token-based)
         if (req.user) {
             // OAuth-based user
             userId = req.user._id;
-            console.log('Inside OAuth block, user ID:', userId);
+            // console.log('Inside OAuth block, user ID:', userId);
         } else {
             // Token-based user
             const token = req.headers.authorization?.split(' ')[1];
@@ -215,7 +215,7 @@ router.post('/addincome', protectRoute, async (req, res) => {
             try {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
                 userId = decoded.userId;
-                console.log('Token-based user, user ID:', userId);
+                // console.log('Token-based user, user ID:', userId);
             } catch (error) {
                 console.error('JWT verification failed:', error);
                 return res.status(401).json({ success: false, message: 'Invalid token' });
@@ -224,16 +224,18 @@ router.post('/addincome', protectRoute, async (req, res) => {
 
         // Validate and extract transaction data from the request body
         const { income, description, date } = req.body.obj;
-        console.log(income, description, date);
 
-
-
+        const [day, month, year] = date.split('/');
+        const updateddate = new Date(`${year}-${month}-${day}`);
+        console.log('Formatted Date:', updateddate);
+        console.log(updateddate);
         // Create a new transaction document
+
         const newTransaction = await Transaction.create({
             type: 'income',
             amount: income,
             description,
-            date,
+            date:updateddate,
             user: userId,
         });
 
@@ -243,12 +245,13 @@ router.post('/addincome', protectRoute, async (req, res) => {
             { $push: { transactions: newTransaction._id } },
             { new: true }
         ).populate('transactions'); // Populate the transactions array with transaction details
-
+        updatedUser.totalincome=parseInt(updatedUser.totalincome)+parseInt(income);
+        updatedUser.save();
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        console.log('Updated user:', updatedUser);
+        // console.log('Updated user:', updatedUser);
         res.status(200).json({
             success: true,
             message: 'Transaction added successfully',
@@ -259,23 +262,26 @@ router.post('/addincome', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
-router.post('/addexpense', protectRoute, async (req, res) => {
+
+router.post('/addexpense',protectRoute, async (req, res) => {
     try {
         let userId;
+
         // Determine user authentication type (OAuth or token-based)
         if (req.user) {
             // OAuth-based user
             userId = req.user._id;
-            console.log('Inside OAuth block, user ID:', userId);
         } else {
             // Token-based user
             const token = req.headers.authorization?.split(' ')[1];
-
+    
+            
             if (!token) {
                 return res.status(401).json({ success: false, message: 'No token provided' });
             }
 
             try {
+                console.log(process.env.JWT_SECRET)
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
                 userId = decoded.userId;
                 console.log('Token-based user, user ID:', userId);
@@ -284,45 +290,57 @@ router.post('/addexpense', protectRoute, async (req, res) => {
                 return res.status(401).json({ success: false, message: 'Invalid token' });
             }
         }
-
         // Validate and extract transaction data from the request body
         let { expense, description, date, category } = req.body.expenseData;
-        console.log(expense, description, date, category);
-        
+        let updateddate=date.split('T')[0];
+        // Retrieve the user to validate totalincome and totalexpense
+        let user = await User.findById(userId).populate('transactions');
+        console.log(user);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
+        // Check if totalincome is sufficient for the new expense
+        const currExpense =  parseInt(expense);
+        if (user.totalincome < currExpense) {
+            return res.status(403).json({
+                success: false,
+                message: 'Insufficient income for this expense',
+            });
+        }
 
         // Create a new transaction document
         const newTransaction = await Transaction.create({
             type: 'expense',
             amount: expense,
             description,
-            date,
+            date:updateddate,
             category,
             user: userId,
         });
 
-        // Push the new transaction into the user's transactions array
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { $push: { transactions: newTransaction._id } },
-            { new: true }
-        ).populate('transactions'); // Populate the transactions array with transaction details
+        // Update the user's transactions, totalexpense, and totalincome
+        user.transactions.push(newTransaction._id);
+        user.totalexpense += currExpense;
+        user.totalincome -= parseInt(currExpense); // Deduct expense from total income
+        await user.save();
 
-        if (!updatedUser) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
+        // Repopulate the transactions array after saving
+        user = await User.findById(userId).populate('transactions');
 
-        console.log('Updated user:', updatedUser);
+        console.log('Updated user:', user);
         res.status(200).json({
             success: true,
             message: 'Transaction added successfully',
-            user: updatedUser,
+            user,
         });
     } catch (error) {
         console.error('Error adding transaction:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
+
+
 
 
 
