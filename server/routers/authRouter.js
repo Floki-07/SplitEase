@@ -430,8 +430,136 @@ router.post('/addgoal', protectRoute, async (req, res) => {
 });
 
 
+router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
+    try {
+        let userId;
+        console.log(req.params.id);
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+        // Validate and extract transaction data from the request body
+        let { addMoneyAmount } = req.body;
+        console.log(addMoneyAmount);
+
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        // Create a new gaol document
+        const oldGoal = await Goal.findById({_id:req.params?.id});
+      
+        oldGoal.saved+=parseInt(addMoneyAmount);
+        await oldGoal.save()
+        
+        // Repopulate the transactions array after saving
+        user = await User.findById(userId).populate('goals');
+
+        // console.log('Updated user:', user);
+        res.status(200).json({
+            success: true,
+            message: 'Money added to goal successfully',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
+    try {
+        let userId;
+        console.log(req.params.id);
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+        // Validate and extract transaction data from the request body
+        let { addMoneyAmount } = req.body;
+        console.log(addMoneyAmount);
+
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+        // Create a new gaol document
+        const oldGoal = await Goal.findById({_id:req.params?.id});
+        let description=`Goal:${goal.name}`
+        let category='Savings' ;
+        oldGoal.saved+=parseInt(addMoneyAmount);
+        await oldGoal.save();
+        
+        
 
 
 
+        user = await User.findById(userId).populate('goals');
+       
+        const newTransaction = await Transaction.create({
+            type: 'expense',
+            amount: addMoneyAmount,
+            description,
+            category,
+            user: userId,
+        });
+        
+        user.income-=addMoneyAmount;
+        user.transactions.push(newTransaction)
+        await user.save();
+
+
+
+        res.status(200).json({
+            success: true,
+            message: 'Money added to goal successfully',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+router.delete('/deletegoal/:id', protectRoute, async (req, res) => {
+    try {
+      const goalId = req.params.id;
+      const goal = await Goal.findByIdAndDelete(goalId); // Replace with your database logic
+      if (!goal) {
+        return res.status(404).json({ success: false, message: "Goal not found" });
+      }
+      res.json({ success: true, message: "Goal deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Server error", error });
+    }
+  });
 
 module.exports = router;

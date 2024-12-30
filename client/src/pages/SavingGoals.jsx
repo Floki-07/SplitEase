@@ -8,6 +8,7 @@ const SavingsGoalsPage = () => {
   const [user, setUser] = useState('')
   const [goals, setGoals] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const [loding, setLoading] = useState(false);
 
 
 
@@ -61,9 +62,9 @@ const SavingsGoalsPage = () => {
 
     fetchUserData();
 
-  }, [ toggle]);
+  }, [toggle]);
 
-  
+
 
 
 
@@ -132,9 +133,74 @@ const SavingsGoalsPage = () => {
     setGoalName('')
     setAmount('')
     setDate('')
-  
+
 
   }
+  
+  const handleAddMoney = async (e,goal) => {
+    e.preventDefault()
+    
+    try {
+      const token = localStorage.getItem("token");
+      let response;
+      if (token) {
+        // Token-based onboarding request
+        try {
+          const response = await axios.post(
+            `http://localhost:3000/api/addmoneytogoal/${goal._id}`,  // API endpoint
+            { addMoneyAmount },  // Payload with the budget
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,  // Attach token in Authorization header
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.data.success) {
+            console.log("Money added successfully:", response.data.message);
+            // Optionally redirect or update UI based on success
+            setUser(response.data.user);
+            setToggle(~toggle)
+          } else {
+            console.error("Onboarding failed:", response.data.message);
+          }
+        } catch (tokenError) {
+          console.error("Token-based onboarding failed:", tokenError);
+        }
+      }
+
+      // OAuth-based onboarding request
+      try {
+        response = await axios.post(
+          `http://localhost:3000/api/addmoneytogoal/${goal._id}`,
+          { addMoneyAmount }, // Include the budget as payload
+          {
+            withCredentials: true, // Allows sending cookies
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(), // Correlation ID for tracking
+            },
+          }
+        );
+
+        if (response.data.success) {
+          setUser(response.data.user);
+          console.log(response.data.user);
+          setToggle(~toggle)
+          console.log("Money added:", response.data.message);
+        } else {
+          throw new Error("No success response received for OAuth onboarding");
+        }
+      } catch (oauthError) {
+        console.error("OAuth-based onboarding failed:", oauthError);
+      }
+    } catch (error) {
+      console.error("Critical error during onboarding process:", error);
+    }
+    setAddMoneyAmount('')
+    setIsAddMoneyModal(false)
+  }
+  
 
 
   const calculateDailySavings = (goal) => {
@@ -180,9 +246,64 @@ const SavingsGoalsPage = () => {
     }
   };
 
-  const deleteGoal = (goalId) => {
-    setGoals(goals.filter(goal => goal.id !== goalId));
+  const deleteGoal = async (goalId) => {
+    console.log(goalId);
+    
+    try {
+      const token = localStorage.getItem("token");
+      let response;
+  
+      if (token) {
+        // Token-based request for deleting the goal
+        try {
+          response = await axios.delete(
+            `http://localhost:3000/api/deletegoal/${goalId}`, // Updated API endpoint for deletion
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Attach token in Authorization header
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.data.success) {
+            console.log("Goal deleted successfully:", response.data.message);
+            // Optionally update the UI or state based on success
+            setToggle((prevToggle) => !prevToggle);
+          } else {
+            console.error("Failed to delete goal:", response.data.message);
+          }
+        } catch (tokenError) {
+          console.error("Token-based deletion failed:", tokenError);
+        }
+      } else {
+        // OAuth-based request for deleting the goal
+        try {
+          response = await axios.delete(
+            `http://localhost:3000/api/deletegoal/${goalId}`, // Same endpoint for OAuth
+            {
+              withCredentials: true, // Allows sending cookies
+              headers: {
+                "Content-Type": "application/json",
+                "x-correlation-id": Date.now().toString(), // Correlation ID for tracking
+              },
+            }
+          );
+  
+          if (response.data.success) {
+            console.log("Goal deleted successfully via OAuth:", response.data.message);
+            setToggle((prevToggle) => !prevToggle);
+          } else {
+            throw new Error("No success response received for OAuth deletion");
+          }
+        } catch (oauthError) {
+          console.error("OAuth-based deletion failed:", oauthError);
+        }
+      }
+    } catch (error) {
+      console.error("Critical error during goal deletion process:", error);
+    }
   };
+  
 
   return (
     <div
@@ -210,10 +331,9 @@ const SavingsGoalsPage = () => {
         <div className="flex items-center justify gap-10 flex-wrap justify-start ">
           {user?.goals?.map((goal) => {
             const { daysLeft, dailySavingsRequired } = calculateDailySavings(goal);
-
             return (
               <div
-                key={goal.id}
+                key={crypto.randomUUID()}
                 className="bg-[#121944] rounded-lg p-4 shadow-md w-72 relative "
               >
                 <div className="flex justify-between items-center mb-3 flex-wrap">
@@ -253,7 +373,7 @@ const SavingsGoalsPage = () => {
                     <TrashIcon
                       className="text-red-500 cursor-pointer ml-2"
                       size={26}
-                      onClick={() => deleteGoal(goal.id)}
+                      onClick={() => deleteGoal(goal._id)}
                     />
 
 
@@ -275,7 +395,7 @@ const SavingsGoalsPage = () => {
                     <TrashIcon
                       className="text-red-500 cursor-pointer ml-2"
                       size={20}
-                      onClick={() => deleteGoal(goal.id)}
+                      onClick={() => deleteGoal(goal._id)}
                     />
                   </div>
                 )}
@@ -310,13 +430,13 @@ const SavingsGoalsPage = () => {
                 placeholder="Target Amount"
                 className="w-full p-2 mb-4 bg-[#262C5A] rounded"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value )}
+                onChange={(e) => setAmount(e.target.value)}
               />
               <input
                 type="date"
                 className="w-full p-2 mb-4 bg-[#262C5A] rounded"
                 value={date}
-                onChange={(e) => setDate(e.target.value )}
+                onChange={(e) => setDate(e.target.value)}
               />
 
               <button
@@ -346,24 +466,27 @@ const SavingsGoalsPage = () => {
                 onClick={() => setIsAddMoneyModal(false)}
               />
             </div>
-            <input
-              type="number"
-              placeholder="Amount"
-              className="w-full p-2 mb-4 bg-[#262C5A] rounded"
-              value={addMoneyAmount}
-              onChange={(e) => setAddMoneyAmount(e.target.value)}
-            />
-            <button
-              onClick={addMoney}
-              className="w-full py-3 rounded-lg flex items-center justify-center space-x-2"
-              style={{
-                background: '#796FFE',
-                color: 'white'
-              }}
-            >
-              <PlusIcon size={20} />
-              <span>Add Money</span>
-            </button>
+            <form onSubmit={(e)=>handleAddMoney(e,currentGoal)} >
+
+              <input
+                type="number"
+                placeholder="Amount"
+                className="w-full p-2 mb-4 bg-[#262C5A] rounded"
+                value={addMoneyAmount}
+                onChange={(e) => setAddMoneyAmount(e.target.value)}
+              />
+
+              <button
+                className="w-full py-3 rounded-lg flex items-center justify-center space-x-2"
+                style={{
+                  background: '#796FFE',
+                  color: 'white'
+                }}
+              >
+                <PlusIcon size={20} />
+                <span>Add Money</span>
+              </button>
+            </form>
           </div>
         </div>
       )}
