@@ -12,7 +12,12 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChartComponent = () => {
+const PieChartComponent = ({user}) => {
+
+  let categorywise = user?.categorywise;
+  const categoryWiseValues = Object.values(categorywise);
+  
+
   const data = {
     labels: [
       "Grocery",
@@ -25,7 +30,8 @@ const PieChartComponent = () => {
     ],
     datasets: [
       {
-        data: [1000, 1000, 1000, 1000, 1000, 1000, 1000], // Example data values
+        
+        data: categoryWiseValues, // Example data values
         backgroundColor: [
           "#FF6384", // Red
           "#36A2EB", // Blue

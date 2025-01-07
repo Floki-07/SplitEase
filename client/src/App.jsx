@@ -40,7 +40,7 @@ const AppLayout = () => {
 
 
   // Global States
-  const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('AvatarUrl')); // Fallback avatar
+  const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('AvatarUrl') || null ); // Fallback avatar
  
   
   if (avatarUrl == null) {
@@ -59,7 +59,7 @@ const AppLayout = () => {
           <Route path="/signup" element={<SignUpGoogleWrapper />} />
           <Route path="/login" element={<LoginGoogleWrapper />} />
           {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
-          <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user} setUser={setUser} />} />
+          <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl}  />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
           <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />

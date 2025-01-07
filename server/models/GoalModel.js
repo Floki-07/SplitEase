@@ -29,7 +29,7 @@ const goalSchema = new mongoose.Schema({
     completed: {
         type: Boolean,
         default: false
-    },
+    },   
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

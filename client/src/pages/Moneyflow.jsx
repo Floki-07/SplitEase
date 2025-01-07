@@ -7,11 +7,12 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const Moneyflow = () => {
+ const Moneyflow = () => {
   const [ExpensOpen, setExpensOpen] = useState(false)
   const [IncomeOpen, setIncomeOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState('')
+  const [showErrorModal, setShowErrorModal] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const Moneyflow = () => {
       } catch (error) {
         console.error("Critical error in fetchUserData:", error);
       } finally {
-        setLoading(false)   
+        setLoading(false)
       }
     };
 
@@ -75,6 +76,21 @@ const Moneyflow = () => {
 
   return (
     <>
+      {showErrorModal && (
+        <div className="h-full w-full absolute bg-black/50 top-0 left-0 flex items-center justify-center z-[30]">
+          <div className="bg-white p-6 rounded-md shadow-md flex flex-col items-center">
+            <h2 className="text-red-600 text-lg font-bold">Error</h2>
+            {/* <p className="text-gray-700 mt-2">{errorMessage}</p> */}
+            <p className="text-gray-700 mt-2">Savings should be less than your income.</p>
+            <button
+              onClick={() => setShowErrorModal(false)}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       <div className='m-0 h-full w-[95%]'>
         <div className='flex w-full items-center '>
           <div className='w-[540px] h-[150px]  mt-4 ml-3 flex gap-4'>
@@ -149,12 +165,15 @@ const Moneyflow = () => {
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{user.username}</td>
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.description}</td>
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.date.split('T')[0]}</td>
-                        <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate ${ele.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                        <div className='flex'>
-                        {ele.type === 'income' ? <div>+</div> : <div>-</div>}
-                        {ele.amount}
-                        </div>
+                        <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate 
+                        ${ele.type === 'income' ? 'text-green-500' : ele.type === 'expense' ? 'text-red-500' : 'text-yellow-500'
+                          }`}>
+                          <div className='flex'>
+                            {ele.type === 'income' ? <div>+</div> : ele.type === 'expense' ? <div>-</div> : <div>~</div>}
+                            {ele.amount}
+                          </div>
                         </td>
+
                         <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.category || 'N/A'}</td>
                       </tr>
                     ))
@@ -178,6 +197,7 @@ const Moneyflow = () => {
           setUser={setUser}
           setExpensOpen={setExpensOpen} />
       )}
+      
       {IncomeOpen && (
         <AddIncome
           user={user}

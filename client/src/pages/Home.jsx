@@ -1,32 +1,25 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { parsePath, useNavigate } from "react-router-dom";
-
+axios.defaults.withCredentials = true;
 import CircularProgressBar from "../components/CircularProgressBar";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Goal } from "lucide-react";
 import PieChartComponent from "../components/PieChart";
 import Onboarding from "../components/Onboarding";
 
 const initialCategories = [
-  'Grocery', 'Restaurants', 'Commute', "Bills", 'Stationary', 'Trips', "Micellaneous"
+  'Grocery', 'Restaurant', 'Commute', "Bills", 'Stationary', 'Trips', "Micellaneous"
 ]
 
-
-
-const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
-
+const Home = ({ avatarUrl, setAvatarUrl }) => {
+  const [user, setUser] = useState('')
   const [toggleScrollBtn, setToggleScrollBtn] = useState(true)
   const [categories, setcategories] = useState(initialCategories)
   const navigate = useNavigate()
   const middleRef = useRef(null); // Create a ref for the target element
   const topRef = useRef(null); // Create a ref for the target element
   const [expenseIncomePercentage, setExpenseIncomePercentage] = useState()
-  // const handleScrollDown = () => {
-  //   if (middleRef.current) {
-  //     middleRef.current.scrollIntoView({ behavior: 'smooth' }); // Smooth scrolling
-  //   }
-  //   setToggleScrollBtn(false)
-  // };
+  
   const handleScrollUp = () => {
     if (topRef.current) {
       const offsetTop = topRef.current.offsetTop; // Get the top position of the target element
@@ -66,8 +59,10 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
             if (response.data.user) {
               const userData = response.data.user;
               setUser(userData);
+              console.log(userData.goals);
+              
               const resultPercent = userData.totalincome
-                ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.budget)) *100
+                ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.budget)) * 100
                 : 0;
               setExpenseIncomePercentage(resultPercent);
 
@@ -85,7 +80,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
 
         // OAuth login attempt
         try {
-          response = await axios.get(`http://localhost:3000/auth/login/success`, {
+          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
@@ -142,7 +137,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
               {/* Budget vs Expense */}
               <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
                 <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
-                <CircularProgressBar percentage={Math.round(expenseIncomePercentage)} title={'Income Used'} />
+                <CircularProgressBar percentage={Math.min(100, Math.round(expenseIncomePercentage))} title={'Income Used'} />
               </div>
 
               {/* Monthly Stats */}
@@ -177,20 +172,27 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
                 <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Active Goals</h2>
 
                 <div className="container savings flex flex-col overflow-y-auto custom-scrollbar h-[250px] overflow-x-hidden w-[390px] px-2 gap-2">
-                  <div key={crypto.randomUUID()} className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
-                    <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''} />
-                    <div className="min-h-[150px] flex justify-center items-center ">
-                      <h1 className="text-[28px] font-semibold tracking-wide">Buy Iphone</h1>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
-                    <CircularProgressBar percentage={10} radiusinput={15} strokeInput={10} size={120} showtext={true} />
-                    <div className="min-h-[150px] flex justify-center items-center ">
-                      <h1 className="text-[28px] font-semibold tracking-wide">Buy Continental GT 650</h1>
-                    </div>
-                  </div>
+                  {
+                    user?.goals?.filter((goal) => !goal?.completed).length > 0 ? (
+                      user?.goals
+                        ?.filter((goal) => !goal?.completed)
+                        .map((goal) => (
+                        
+                          <div key={crypto.randomUUID()} className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
+                            <CircularProgressBar percentage={goal?.progress} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''} />
+                            <div className="min-h-[150px] flex justify-center items-center ">
+                              <h1 className="text-[28px] font-semibold tracking-wide">{goal?.name}</h1>
+                            </div>
+                          </div>
+                        ))
+                    ) : (
+                      <div className="text-[--ternary] text-center mt-8"><div className="flex mx-auto w-[50%] gap-5">
+                        No active goals <Goal /></div></div>
+                    )
+                  }
                 </div>
               </div>
+
 
               {/* Scroll Down */}
               {toggleScrollBtn !== false && (
@@ -214,7 +216,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
 
                 <div className="flex">
                   <div className="w-[50%] h-[400px]">
-                    <PieChartComponent />
+                    <PieChartComponent  user={user}/>
                   </div>
                   <div className="w-[60%] pl-10 h-[400px]">
                     <div className="category p-2 container w-[100%] mx-auto pl-20 h-[80%] my-4 gap-2 flex flex-wrap border-l border-white border-opacity-20">
@@ -224,7 +226,7 @@ const Home = ({ avatarUrl, setAvatarUrl, user, setUser }) => {
                           className="w-[150px] rounded-md px-1 h-[90px] bg-[--background3] z-10 gap-2 flex flex-col justify-start items-start"
                         >
                           <h1 className="text-[--primary] text-[24px] font-semibold">{item}</h1>
-                          <span className="ml-1 text-[17px] font-normal">Rs.1000</span>
+                          <span className="ml-1 text-[17px] font-bold">₹{user?.categorywise[item.toLowerCase()]}</span>
                         </div>
                       ))}
                     </div>

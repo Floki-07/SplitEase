@@ -12,7 +12,7 @@ const transactionSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['income', 'expense'], // Type can only be 'income' or 'expense'
+        enum: ['income', 'expense','savings'], // Type can only be 'income' or 'expense'
     },
     date: { type: Date, default: Date.now },
     category: { type: String, }, // e.g., grocery, commute, etc.
