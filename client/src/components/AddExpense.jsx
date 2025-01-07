@@ -154,11 +154,13 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                             <option value="" disabled>
                                 Select Category
                             </option>
-                            <option value="Grocery">Grocery</option>
-                            <option value="Restaurant">Restaurant</option>
-                            <option value="Commute">Commute</option>
-                            <option value="Stationary">Stationary</option>
-                            <option value="Other">Other</option>
+                            <option value="grocery">Grocery</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="commute">Commute</option>
+                            <option value="bills">Bills</option>
+                            <option value="stationary">Stationary</option>
+                            <option value="trips">Trips</option>                            
+                            <option value="micellaneous">Micellaneous</option>
                         </select>
                         <div className="flex items-center justify-center w-full">
                             <button
