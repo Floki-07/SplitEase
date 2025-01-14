@@ -9,6 +9,7 @@ const session = require('express-session');
 const User = require('../models/UserModel')
 const Transaction = require('../models/TransactionModel')
 const Goal=require('../models/GoalModel')
+const Friend=require('../models/FriendModel')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -35,7 +36,7 @@ router.get('/getUserInfo', protectRoute, async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid token' });
         }
     }
-    const user = await User.findById(userId).populate('transactions goals');
+    const user = await User.findById(userId).populate('transactions goals friends');
     if (user) {
         res.status(200).json({ user });
     } else {
@@ -122,7 +123,6 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         // Find the user in the database
         const user = await User.findOne({ email });
         if (!user) {
@@ -529,6 +529,154 @@ router.delete('/deletegoal/:id', protectRoute, async (req, res) => {
       res.json({ success: true, message: "Goal deleted successfully" });
     } catch (error) {
       res.status(500).json({ success: false, message: "Server error", error });
+    }
+  });
+router.post('/addfriend', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+        // Validate and extract transaction data from the request body
+        let { name, phone } = req.body.obj;
+        
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+
+        // Create a new gaol document
+        const newfriend = await Friend.create({
+            name,
+            phone,
+        });
+      
+        user.friends.push(newfriend?._id);
+        user.save()
+        // Repopulate the transactions array after saving
+        user = await User.findById(userId).populate('friends');
+
+        console.log('Updated user:', user);
+        res.status(200).json({
+            success: true,
+            message: 'Friend added successfully',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  });
+router.post('/splitwithfriend', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+        // Validate and extract transaction data from the request body
+        let { friendId,bill,description,category ,userExpense ,friendExpense,paidByuser} = req.body.obj;
+        
+
+        
+        let user = await User.findById(userId);
+        let friend=await Friend.findById(friendId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+        
+        //1000-800U 200F
+        // + he owes me 
+        // - i owe him
+        let newTransaction;
+        if (paidByuser) {
+            // User paid for the bill
+            newTransaction = await Transaction.create({
+                amount: parseFloat(bill),
+                friend: friend._id,
+                friendname: friend.name,
+                description,
+                type: 'expense',
+                category,
+                moneySpent: parseFloat(userExpense),  // User's share of the expense
+                moneyowed: parseFloat(friendExpense), // Friend owes this amount to the user
+                moneyweowe: 0, // User owes nothing since they paid
+                personal: false,
+            });
+            // Update friend's balance to reflect their debt
+            friend.balance += parseInt(friendExpense);
+            user.totalexpense+=parseInt(bill);
+            user.totalincome-=parseInt(bill);
+            user.categorywise.category+=parseInt(userExpense)
+            user.amountspent+=parseInt(bill);
+            user.amountowed += parseInt(friendExpense);
+        } else {
+            // Friend paid for the bill
+            newTransaction = await Transaction.create({
+                amount: parseFloat(bill),
+                friend: friend._id,
+                friendname: friend.name,
+                type: 'expense',
+                category,
+                moneySpent: parseFloat(userExpense),  // User's share of the expense
+                moneyowed: 0, // Friend owes nothing since they paid
+                moneyweowe: parseFloat(userExpense), // User owes this amount to the friend
+                personal: false,
+            });
+            user.amountspent+=parseFloat(bill);
+            user.amountheowes += parseFloat(userExpense);
+           // Update friend's balance to reflect the user's debt
+            friend.balance -= parseFloat(userExpense);
+        }
+        friend.save()
+        user.transactions.push(newTransaction);
+        user.save()
+        // Repopulate the transactions array after saving
+        user = await User.findById(userId).populate('friends');
+
+        console.log('Updated user:', user);
+        res.status(200).json({
+            success: true,
+            message: 'Bill split successfull',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
   });
 

@@ -2,15 +2,22 @@ import axios from "axios";
 import { X, CircleUser, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+// import NavbarImage from "./NavbarImage";
+import React, { Suspense, lazy } from 'react';
 
-function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
+const NavbarImage = lazy(() => import('./NavbarImage'));
+
+function NavBar({ isLanding }) {
   const navigate = useNavigate();
-  
+  const [user, setUser] = useState(null)
   const [modalopen, setModalopen] = useState(false)
-
+  const [avatarUrl, setAvatarUrl] = useState('')
+  console.log(isLanding);
+  const [loading, setLoading] = useState(false)
   const handleModalOpen = () => {
     setModalopen(true)
   }
+
   const handleLogout = async () => {
     try {
       await axios.post("http://localhost:3000/api/logout", {}, { withCredentials: true });
@@ -26,7 +33,7 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      // setLoading(true)
+      setLoading(true)
       try {
         const token = localStorage.getItem("token");
 
@@ -41,7 +48,7 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
 
             if (response.data.user) {
               setUser(response.data.user);
-              console.log(response.data.user);
+              console.log('Navbar', response.data.user);
               return;
             }
           } catch (tokenError) {
@@ -71,12 +78,13 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
       } catch (error) {
         console.error("Critical error in fetchUserData:", error);
       } finally {
-        // setLoading(false)  
+        setLoading(false)
       }
     };
-
-    fetchUserData();
-  }, []);
+    if (isLanding === false) {
+      fetchUserData();
+    }
+  }, [isLanding, setUser, ]);
 
 
 
@@ -97,18 +105,14 @@ function NavBar({ isLanding, avatarUrl, setAvatarUrl, user ,setUser}) {
         {!isLanding &&
           (<>
             <div className="w-[50px] h-[50px] relative" onClick={handleModalOpen}>
-              <img
-                src={user?.avatar}
-                alt="Avatar"
-                className="h-[50px] w-[50px] rounded-full"
-             
-              />
-
+              <Suspense fallback={<div className="w-[50px] h-[50px] bg-gray-200 animate-pulse" />}>
+                <NavbarImage user={user} />
+              </Suspense>
             </div>
             {modalopen &&
               <div className="absolute top-[65px] flex flex-col  right-[5px]  bg-[--background3] w-[230px] h-[270px] rounded-sm">
                 <div className="w-full flex items-end justify-end px-2 py-2 text-[--ternary]">
-                  <div><X size={19}  className="hover:scale-[110%]" onClick={() => setModalopen(false)} /></div>
+                  <div><X size={19} className="hover:scale-[110%]" onClick={() => setModalopen(false)} /></div>
                 </div>
                 <div className="w-[90%] mx-auto  h-[120px] mt-[5px] ">
 

@@ -13,7 +13,7 @@ const Signup = () => {
   };
 
   const handleSignupForm = async (e) => {
-    e.preventDefault();
+    e.preventDefault();//stops 
     
     setIsLoading(true);
     setError('');

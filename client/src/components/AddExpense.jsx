@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'sonner';
+import { color } from 'framer-motion';
 
 const AddExpense = ({ setExpensOpen, user, setUser }) => {
     const [expense, setExpense] = useState('');
@@ -14,13 +16,13 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
         e.preventDefault();
         const expenseData = { expense, description, date, category };
         setErrorMessage(''); // Clear previous errors
-    
+
         try {
             const token = localStorage.getItem("token");
             console.log("Token:", token);
-    
+
             let response;
-    
+
             if (token) {
                 // Token-based request for adding expense
                 try {
@@ -34,10 +36,16 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                             },
                         }
                     );
-    
+
                     if (response.data.success) {
                         console.log("Expense added successfully:", response.data.message);
                         setUser(response.data.user);
+                        toast.success('Expense added successfully', {
+                            style: {
+                                color: "red",
+                            } // Set the text color to green
+
+                        })
                         setExpensOpen(false); // Close the expense modal
                     } else {
                         setErrorMessage(response.data.message || 'An error occurred');
@@ -49,7 +57,7 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                     setShowErrorModal(true); // Show error modal
                 }
             }
-    
+
             // OAuth-based request (if no token, use cookies)
             try {
                 response = await axios.post(
@@ -64,11 +72,17 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                     }
                 );
                 console.log(response.data.message);
-                
+
                 if (response.data.success) {
                     console.log("Expense added successfully:", response?.data?.message);
                     setUser(response.data.user);
-                    setExpensOpen(false); // Close the expense modal
+                    setExpensOpen(false);
+                    toast.success('Expense added successfully', {
+                        style: {
+                            color: "red",
+                        } // Set the text color to green
+
+                    }) // Close the expense modal
                 } else {
                     // setErrorMessage(response.data.message || 'An error occurred');
                     setShowErrorModal(true); // Show error modal
@@ -78,21 +92,21 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                 // setErrorMessage('OAuth-based request failed');
                 setShowErrorModal(true); // Show error modal
             }
-    
+
         } catch (error) {
             // console.error("Critical error during request process:", error);
             // setErrorMessage('Internal server error');
             // setShowErrorModal(true); // Show error modal
             console.log(error);
-            
-        }   
+
+        }
         // Reset the form fields
         setExpense('');
         setDescription('');
         setDate('');
         setCategory('');
     };
-    
+
 
     return (
         <>
@@ -159,7 +173,7 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
                             <option value="commute">Commute</option>
                             <option value="bills">Bills</option>
                             <option value="stationary">Stationary</option>
-                            <option value="trips">Trips</option>                            
+                            <option value="trips">Trips</option>
                             <option value="micellaneous">Micellaneous</option>
                         </select>
                         <div className="flex items-center justify-center w-full">
