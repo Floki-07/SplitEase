@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import Button from './Button';
 import axios from 'axios';
+import { toast } from 'sonner';
 
-
+ 
+function MyToast() {
+  return <button onClick={() => toast('Toast')}>Render Toast</button>;
+}
 const AddIncome = ({ setIncomeOpen,user,setUser }) => {
   // State to manage form values
   const [income, setIncome] = useState('');
@@ -42,8 +46,9 @@ const AddIncome = ({ setIncomeOpen,user,setUser }) => {
                 );
         
                 if (response.data.success) {
-                    console.log("Income add successfully:", response.data.message);
+                    console.log("Income add successfully", response.data.message);
                     // Optionally redirect or update UI based on success
+                    toast.success('Income add successfully')
                     setUser(response.data.user)
                    
                 } else {
@@ -71,7 +76,10 @@ const AddIncome = ({ setIncomeOpen,user,setUser }) => {
             if (response.data.success) {
                 setUser(response.data.user)
                 console.log(response.data.user);
-                
+                toast.success('Income add successfully' , {
+                  style: {
+                    color: "green", // Set the text color to green
+                  }})
                 console.log("Income added:", response.data.message);
             } else {
                 throw new Error("No success response received for OAuth onboarding");

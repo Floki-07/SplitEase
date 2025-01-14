@@ -46,18 +46,18 @@ const AppLayout = () => {
   if (avatarUrl == null) {
     setAvatarUrl('/images/Profile.jpg')
   }
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('');
 
 
   return (
     <div className='bg-[--background  ] h-screen text-[--primary]'>
-      <Navbar isLanding={isLanding} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} user={user}  setUser={setUser}/>
+      <Navbar isLanding={isLanding} avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl}/>
       <div className='flex h-[calc(100%-60px)] custom-scrollbar'>
         <SideBar isLanding={isLanding} />
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/signup" element={<SignUpGoogleWrapper />} />
-          <Route path="/login" element={<LoginGoogleWrapper />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
           <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl}  />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -80,25 +80,23 @@ const AppLayout = () => {
 
 
 
-const SignUpGoogleWrapper = () => {
-  return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-    <Signup />
-  </GoogleOAuthProvider>
-}
-const LoginGoogleWrapper = () => {
-  return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-    <Login />
-  </GoogleOAuthProvider>
-}
+// const SignUpGoogleWrapper = () => {
+//   return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
+//     <Signup />
+//   </GoogleOAuthProvider>
+// }
+// const LoginGoogleWrapper = () => {
+//   return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
+//     <Login />
+//   </GoogleOAuthProvider>
+// }
 function App() {
-
   return (
-    <>
+    
       <Router>
         <AppLayout />
       </Router>
-    </>
-  )
+  
+  );
 }
-
 export default App

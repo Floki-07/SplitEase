@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     totalexpense: { type: Number, default: 0 },
     balance: { type: Number, default: 0 },
     amountowed: { type: Number, default: 0 },
+    amountheowes: { type: Number, default: 0 },    
     amountspent: { type: Number, default: 0 },
     budget: { type: Number, default: 0 },
     groups: [{
@@ -42,8 +43,8 @@ const userSchema = new mongoose.Schema({
         trips: { type: Number, default: 0 },
         micellaneous: { type: Number, default: 0 },
     },
-
     verified: { type: Boolean, default: false },
+
 
 }, { timestamps: true });
 

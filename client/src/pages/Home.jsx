@@ -11,6 +11,8 @@ const initialCategories = [
   'Grocery', 'Restaurant', 'Commute', "Bills", 'Stationary', 'Trips', "Micellaneous"
 ]
 
+
+
 const Home = ({ avatarUrl, setAvatarUrl }) => {
   const [user, setUser] = useState('')
   const [toggleScrollBtn, setToggleScrollBtn] = useState(true)
@@ -19,7 +21,7 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
   const middleRef = useRef(null); // Create a ref for the target element
   const topRef = useRef(null); // Create a ref for the target element
   const [expenseIncomePercentage, setExpenseIncomePercentage] = useState()
-  
+
   const handleScrollUp = () => {
     if (topRef.current) {
       const offsetTop = topRef.current.offsetTop; // Get the top position of the target element
@@ -60,7 +62,7 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
               const userData = response.data.user;
               setUser(userData);
               console.log(userData.goals);
-              
+
               const resultPercent = userData.totalincome
                 ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.budget)) * 100
                 : 0;
@@ -117,7 +119,6 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
     fetchUserData();
   }, [navigate, setAvatarUrl, setUser]);
 
-  // console.log(user);
 
   return (
     <div className="dashboard-container custom-scrollbar">
@@ -125,6 +126,7 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
         user.verified ? (
           <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
             {/* Header */}
+
             <div id="top" ref={topRef} className="w-full flex justify-between items-center mb-2 mt-3">
               <h1 className="text-white text-[26px] font-bold">
                 Welcome back <span className="text-[#3C9A87]">{user?.username}</span>
@@ -177,7 +179,7 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
                       user?.goals
                         ?.filter((goal) => !goal?.completed)
                         .map((goal) => (
-                        
+
                           <div key={crypto.randomUUID()} className="flex items-center gap-4 mt-2 bg-[--background] rounded-md w-[350px] min-h-[150px] px-3 overflow-y-auto custom-scrollbar">
                             <CircularProgressBar percentage={goal?.progress} radiusinput={15} strokeInput={10} size={120} showtext={true} title={''} />
                             <div className="min-h-[150px] flex justify-center items-center ">
@@ -216,7 +218,13 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
 
                 <div className="flex">
                   <div className="w-[50%] h-[400px]">
-                    <PieChartComponent  user={user}/>
+                    {
+                      user!==null ? (
+                        <PieChartComponent user={user} />
+                      ) : (
+                        <div>Loading...</div> // Display a loading message or spinner
+                      )
+                    }
                   </div>
                   <div className="w-[60%] pl-10 h-[400px]">
                     <div className="category p-2 container w-[100%] mx-auto pl-20 h-[80%] my-4 gap-2 flex flex-wrap border-l border-white border-opacity-20">
