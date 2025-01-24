@@ -8,11 +8,19 @@ const CircularProgressBar = ({
   showtext = true,
   title
 }) => {
+  
+  let displayPercentage=percentage;//200
+  if(percentage>=100){
+    displayPercentage =percentage;//200
+    percentage=100;
+  }
   const radius = radiusInput; // Radius of the circle
   const strokeWidth = strokeInput; // Width of the stroke
   const circumference = 2 * Math.PI * radius; // Circumference of the circle
   const offset = circumference - (percentage / 100) * circumference; // Offset for progress
   console.log('Percentage',percentage);
+  console.log('display',displayPercentage);
+  
   
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -58,7 +66,7 @@ const CircularProgressBar = ({
             className="circletext"
           >
 
-            {percentage}%
+            {displayPercentage}%
 
 
           </text>

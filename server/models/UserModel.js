@@ -7,9 +7,12 @@ const userSchema = new mongoose.Schema({
     oauthProvider: { type: String }, // e.g., 'google', 'github'
     oauthId: { type: String },
     avatar: { type: String },
-    totalincome: { type: Number, default: 0 },
-    totalexpense: { type: Number, default: 0 },
-    balance: { type: Number, default: 0 },
+    
+    totalincome: { type: Number, default: 0 },//total this is decreasing and we dont want that //dont touch this value
+    totalexpense: { type: Number, default: 0 },//always inc
+    balance: { type: Number, default: 0 }, //
+
+
     amountowed: { type: Number, default: 0 },
     amountheowes: { type: Number, default: 0 },    
     amountspent: { type: Number, default: 0 },

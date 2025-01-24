@@ -1,79 +1,246 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusIcon, EditIcon, SaveIcon, TrashIcon, UsersIcon, Trash2Icon } from 'lucide-react';
 import { Pencil, Equal } from 'lucide-react'
 import Button from '../components/Button';
-
+import axios from 'axios';
+import { toast } from 'sonner';
+axios.defaults.withCredentials = true;
+import { Link } from 'react-router-dom';
 const Groups = () => {
-  const [groups, setGroups] = useState([
-    {
-      id: 1,
-      name: 'Buddies Corner',
-      members: [
-        { id: 1, name: 'Sujal', selected: false },
-        { id: 2, name: 'Tejas', selected: false },
-        { id: 3, name: 'Yasar', selected: false }
-      ],
-      recentBill: 'Restaurant'
-    },
-    // {
-    //   id: 2,
-    //   name: 'Weekend Crew',
-    //   members: [
-    //     { id: 4, name: 'David', selected: false },
-    //     { id: 5, name: 'Eve', selected: false }
-    //   ],
-    //   recentBill: 'Dinner'
-    // }
-  ]);
-
-  const [friends] = useState([
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' },
-    { id: 4, name: 'David' },
-    { id: 5, name: 'Eve' },
-    { id: 6, name: 'Frank' }
-  ]);
+  const [groups, setGroups] = useState([]);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null);
   const [isViewGroupOpen, setIsViewGroupOpen] = useState(false)
+  const [newGroupAdded, setNewGroupAdded] = useState(false);
+
   const [newGroup, setNewGroup] = useState({
     name: '',
     members: []
   });
+  const [user, setUser] = useState(null);
+  const [friends, setFriends] = useState([]);
 
-  const createNewGroup = () => {
-    if (newGroup.name && newGroup.members.length > 0) {
-      const group = {
-        id: groups.length + 1,
-        name: newGroup.name,
-        members: newGroup.members,
-        recentBill: ''
-      };
-      setGroups([...groups, group]);
-      setIsCreateModalOpen(false);
-      setNewGroup({ name: '', members: [] });
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        let response;
+
+        if (token) {
+          try {
+            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (response.data.user) {
+              const userData = response.data.user;
+              setUser(userData);
+              setFriends(userData.friends);
+              setGroups(userData.groups);
+              return;
+            }
+          } catch (tokenError) {
+            console.error("Token validation failed:", tokenError);
+            localStorage.removeItem("token");
+          }
+        }
+
+        // OAuth login attempt
+        try {
+          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(),
+            },
+          });
+
+          if (response.data.user) {
+            const userData = response.data.user;
+            setUser(userData);
+            setFriends(userData.friends);
+            console.log(userData.friends);
+            setGroups(userData.groups);
+            console.log(userData.groups);
+
+            return;
+          } else {
+            // throw new Error("No user data received");
+          }
+        } catch (oauthError) {
+          console.error("OAuth login failed:", oauthError);
+          // navigate("/login");
+        }
+      } catch (error) {
+        console.error("Critical error in fetchUserData:", error);
+        localStorage.removeItem("token");
+        // navigate("/login");
+      }
+    };
+
+    fetchUserData();
+  }, [setUser, newGroupAdded]);
+
+
+
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    setIsCreateModalOpen(false);
+    console.log(newGroup);
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token:", token);
+
+      let response;
+
+      if (token) {
+        // Token-based request for adding expense
+        try {
+          response = await axios.post(
+            `http://localhost:3000/api/addnewgroup`,  // API endpoint
+            { newGroup },  // Payload with expense data
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,  // Attach token in Authorization header
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.data.success) {
+            toast.success('Group added successfully', {
+              style: {
+                color: "green",
+              } // Set the text color to green
+            })
+            setUser(response.data.user);
+            setFriends(user.friends);
+            setNewGroupAdded(~newGroupAdded)
+            setIsCreateModalOpen(false)
+          } else {
+          }
+        } catch (tokenError) {
+          console.error("Token-based request failed:", tokenError);
+        }
+      }
+
+      // OAuth-based request (if no token, use cookies)
+      try {
+        response = await axios.post(
+          `http://localhost:3000/api/addnewgroup`,  // API endpoint
+          { newGroup }, // Include the expense data as payload
+          {
+            withCredentials: true, // Allows sending cookies for OAuth
+            headers: {
+              "Content-Type": "application/json",
+              "x-correlation-id": Date.now().toString(), // Correlation ID for tracking
+            },
+          }
+        );
+        console.log(response.data.message);
+
+        if (response.data.success) {
+          toast.success('Group added successfully', {
+            style: {
+              color: "green",
+            } // Set the text color to green
+
+          }) // Close the expense modal
+          setUser(response.data.user);
+          setFriends(user.friends);
+          setIsCreateModalOpen(false)
+          setNewGroupAdded(~newGroupAdded)
+        } else {
+          // setErrorMessage(response.data.message || 'An error occurred');
+        }
+      } catch (oauthError) {
+        console.error("OAuth-based request failed:", oauthError);
+      }
+
+    } catch (error) {
+      console.log(error);
     }
+
+
   };
 
-  const editGroup = () => {
-    if (currentGroup) {
-      const updatedGroups = groups.map(group =>
-        group.id === currentGroup.id ? currentGroup : group
-      );
-      setGroups(updatedGroups);
-      setIsEditModalOpen(false);
-    }
-  };
+
 
   const handleGroupClick = () => {
-    setIsViewGroupOpen(true)
+    // setIsViewGroupOpen(true)
   }
+  const deleteGroup = async (groupId) => {
+    console.log(groupId);
+    try {
+      const token = localStorage.getItem("token");
+      let response;
 
-  const deleteGroup = (groupId) => {
-    setGroups(groups.filter(group => group.id !== groupId));
+      if (token) {
+        // Token-based request for deleting the goal
+        try {
+          response = await axios.delete(
+            `http://localhost:3000/api/deletegroup/${groupId}`, // Updated API endpoint for deletion
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Attach token in Authorization header
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          if (response.data.success) {
+            console.log("Group deleted successfully:", response.data.message);
+            toast.warning('Group deleted successfully', {
+              style: {
+                color: "red",
+              } // Set the text color to green
+            })
+            // Optionally update the UI or state based on success
+            setNewGroupAdded(~newGroupAdded)
+          } else {
+            console.error("Failed to delete Group:", response.data.message);
+          }
+        } catch (tokenError) {
+          console.error("Token-based deletion failed:", tokenError);
+        }
+      } else {
+        // OAuth-based request for deleting the Group
+        try {
+          response = await axios.delete(
+            `http://localhost:3000/api/deletegroup/${groupId}`, // Same endpoint for OAuth
+            {
+              withCredentials: true, // Allows sending cookies
+              headers: {
+                "Content-Type": "application/json",
+                "x-correlation-id": Date.now().toString(), // Correlation ID for tracking
+              },
+            }
+          );
+
+          if (response.data.success) {
+            console.log("Goal deleted successfully via OAuth:", response.data.message);
+            setNewGroupAdded(~newGroupAdded)
+            toast.warning('Group deleted successfully', {
+              style: {
+                color: "red",
+              } // Set the text color to green
+            })
+          } else {
+            throw new Error("No success response received for OAuth deletion");
+          }
+        } catch (oauthError) {
+          console.error("OAuth-based deletion failed:", oauthError);
+        }
+      }
+    } catch (error) {
+      console.error("Critical error during goal deletion process:", error);
+    }
   };
 
   return (
@@ -85,7 +252,7 @@ const Groups = () => {
       }}
     >
       <div className="container mx-auto ">
-        <h1 className="text-2xl font-bold mb-6 text-[--heading] text-[27px]">Bill Split Groups</h1>
+        <h1 className="text-2xl font-bold mb-6 text-[--heading] text-[27px]">All Groups</h1>
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
@@ -99,10 +266,12 @@ const Groups = () => {
           <span>Create Group</span>
         </button>
 
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups.map((group) => (
             <div
-              key={group.id}
+              key={group._id}
               onClick={handleGroupClick}
               className="bg-[#121944]  rounded-lg p-4 hover:scale-105 transition-all delay-100 shadow-md shadow-black"
             >
@@ -116,10 +285,9 @@ const Groups = () => {
                     }}
                     className="text-blue-500"
                   >
-                    <EditIcon size={20} />
                   </button>
                   <button
-                    onClick={() => deleteGroup(group.id)}
+                    onClick={() => deleteGroup(group._id)}
                     className="text-red-500"
                   >
                     <TrashIcon size={20} />
@@ -128,7 +296,7 @@ const Groups = () => {
               </div>
 
               <div className="mb-3">
-                <p className="text-gray-400">Money Spent Rs.1000</p>
+                <p className="text-gray-400">Money Spent :₹{group.moneySpent}</p>
               </div>
 
               <div className="flex items-center text-sm text-gray-400">
@@ -142,110 +310,57 @@ const Groups = () => {
 
       {/* Create Group Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-[#121944] p-6 rounded-lg w-96">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={() => setIsCreateModalOpen(false)}>
+          <div className="bg-[#121944] p-6 rounded-lg w-96" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-xl font-bold mb-4">Create New Group</h2>
-            <input
-              type="text"
-              placeholder="Group Name"
-              className="w-full p-2 mb-4 bg-[#262C5A] rounded text-white"
-              value={newGroup.name}
-              onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
-            />
-            <div className="mb-4">
-              <h3 className="text-lg mb-2">Select Members</h3>
-              {friends.map((friend) => (
-                <div
-                  key={friend.id}
-                  className="flex items-center mb-2"
-                >
-                  <input
-                    type="checkbox"
-                    id={`friend-${friend.id}`}
-                    checked={newGroup.members.some(m => m.id === friend.id)}
-                    onChange={() => {
-                      const memberExists = newGroup.members.some(m => m.id === friend.id);
-                      setNewGroup(prev => ({
-                        ...prev,
-                        members: memberExists
-                          ? prev.members.filter(m => m.id !== friend.id)
-                          : [...prev.members, { ...friend, selected: false }]
-                      }));
-                    }}
-                    className="mr-2"
-                  />
-                  <label htmlFor={`friend-${friend.id}`}>{friend.name}</label>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={createNewGroup}
-              className="w-full py-3 rounded-lg flex items-center justify-center space-x-2"
-              style={{
-                background: '#796FFE',
-                color: 'white'
-              }}
-            >
-              <SaveIcon size={20} />
-              <span>Save Group</span>
-            </button>
+            <form onSubmit={handleCreateGroup}>
+              <input
+                type="text"
+                placeholder="Group Name"
+                className="w-full p-2 mb-4 bg-[#262C5A] rounded text-white"
+                value={newGroup.name}
+                onChange={(e) => setNewGroup({ ...newGroup, name: e.target.value })}
+                required
+              />
+              <div className="mb-4">
+                <h3 className="text-lg mb-2">Select Members</h3>
+                {friends.map((friend) => (
+                  <div
+                    key={crypto.randomUUID()}
+                    className="flex items-center mb-2"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`friend-${friend._id}`}
+                      checked={newGroup.members.some(m => m._id === friend._id)}
+                      onChange={() => {
+                        const memberExists = newGroup.members.some(m => m._id === friend._id);
+                        setNewGroup(prev => ({
+                          ...prev,
+                          members: memberExists
+                            ? prev.members.filter(m => m._id !== friend._id)
+                            : [...prev.members, { ...friend, selected: false }]
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`friend-${friend.id}`}>{friend.name}</label>
+                  </div>
+                ))}
+              </div>
+              <button
+                type='submit'
+                className="bg-green-500 text-white px-4 py-2 rounded mx-auto"
+                disabled={!newGroup.members.length}
+              >
+                Create Group
+              </button>
+            </form>
           </div>
         </div>
       )}
 
-      {/* Edit Group Modal */}
-      {isEditModalOpen && currentGroup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-[#121944] p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Edit Group</h2>
-            <input
-              type="text"
-              placeholder="Group Name"
-              className="w-full p-2 mb-4 bg-[#262C5A] rounded text-white"
-              value={currentGroup.name}
-              onChange={(e) => setCurrentGroup({ ...currentGroup, name: e.target.value })}
-            />
-            <div className="mb-4">
-              <h3 className="text-lg mb-2">Select Members</h3>
-              {friends.map((friend) => (
-                <div
-                  key={friend.id}
-                  className="flex items-center mb-2"
-                >
-                  <input
-                    type="checkbox"
-                    id={`edit-friend-${friend.id}`}
-                    checked={currentGroup.members.some(m => m.id === friend.id)}
-                    onChange={() => {
-                      const updatedMembers = currentGroup.members.some(m => m.id === friend.id)
-                        ? currentGroup.members.filter(m => m.id !== friend.id)
-                        : [...currentGroup.members, { ...friend, selected: false }];
 
-                      setCurrentGroup({
-                        ...currentGroup,
-                        members: updatedMembers
-                      });
-                    }}
-                    className="mr-2"
-                  />
-                  <label htmlFor={`edit-friend-${friend.id}`}>{friend.name}</label>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={editGroup}
-              className="w-full py-3 rounded-lg flex items-center justify-center space-x-2"
-              style={{
-                background: '#796FFE',
-                color: 'white'
-              }}
-            >
-              <SaveIcon size={20} />
-              <span>Save Changes</span>
-            </button>
-          </div>
-        </div>
-      )}
       {/* Modal for grp wise description */}
       {
         isViewGroupOpen &&
@@ -308,7 +423,7 @@ const Groups = () => {
                     </button>
                   </div>
                 </div>
-              
+
                 <div className=" card mt-3 w-[100%] bg-[--background] h-[70px] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100">
                   <div className=" w-[230px] flex items-center justify-between gap-3">
 
@@ -385,7 +500,7 @@ const Groups = () => {
                     </button>
                   </div>
                 </div>
-              
+
 
 
 

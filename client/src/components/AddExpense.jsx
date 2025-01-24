@@ -16,7 +16,15 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
         e.preventDefault();
         const expenseData = { expense, description, date, category };
         setErrorMessage(''); // Clear previous errors
-
+        if (user.totalincome < user.totalexpense + parseFloat(expense)) {
+            toast.warning('No sufficient balance.Please add money to your wallet.', {
+                style: {
+                    color: "red"
+                }
+            })
+            setExpensOpen(false)
+            return;
+        }
         try {
             const token = localStorage.getItem("token");
             console.log("Token:", token);

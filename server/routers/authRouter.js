@@ -8,39 +8,60 @@ const passport = require('passport');
 const session = require('express-session');
 const User = require('../models/UserModel')
 const Transaction = require('../models/TransactionModel')
-const Goal=require('../models/GoalModel')
-const Friend=require('../models/FriendModel')
+const Goal = require('../models/GoalModel')
+const Friend = require('../models/FriendModel')
+const Group = require('../models/GroupModel')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 router.get('/getUserInfo', protectRoute, async (req, res) => {
     let userId;
-    // Determine user authentication type (OAuth or token-based)
-    if (req.user) {
-        // OAuth-based user
-        userId = req.user._id;
-    } else {
-        // Token-based user
-        const token = req.headers.authorization?.split(' ')[1];
+    try {
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
 
-        if (!token) {
-            return res.status(401).json({ success: false, message: 'No token provided' });
-        }
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
 
-        try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             userId = decoded.userId;
-        } catch (error) {
-            console.error('JWT verification failed:', error);
-            return res.status(401).json({ success: false, message: 'Invalid token' });
         }
-    }
-    const user = await User.findById(userId).populate('transactions goals friends');
-    if (user) {
-        res.status(200).json({ user });
-    } else {
-        res.status(404).json({ error: 'User not found' });
+
+        // Fetch user and populate related fields
+        const user = await User.findById(userId)
+            .populate({
+                path: 'transactions', // Assuming transactions is a field in User schema
+            })
+            .populate({
+                path: 'goals', // Assuming goals is a field in User schema
+            })
+            .populate({
+                path: 'friends', // Assuming friends is a field in User schema
+            })
+            .populate({
+                path: 'groups', // Assuming groups is a field in User schema
+                populate: {
+                    path: 'members', // Nested population of members in groups
+                    select: 'name phone balance',
+                },
+                select: 'name moneySpent',
+            });
+
+        if (user) {
+            res.status(200).json({ success: true, user });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
 
@@ -268,7 +289,7 @@ router.post('/addincome', protectRoute, async (req, res) => {
             { $push: { transactions: newTransaction._id } },
             { new: true }
         ).populate('transactions'); // Populate the transactions array with transaction details
-        updatedUser.totalincome = parseInt(updatedUser.totalincome) + parseInt(income);
+        updatedUser.totalincome = parseFloat(updatedUser.totalincome) + parseFloat(income);
         updatedUser.save();
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -324,7 +345,7 @@ router.post('/addexpense', protectRoute, async (req, res) => {
         }
 
         // Check if totalincome is sufficient for the new expense
-        const currExpense = parseInt(expense);
+        const currExpense = parseFloat(expense);
         if (user.totalincome < currExpense) {
             return res.status(403).json({
                 success: false,
@@ -345,10 +366,10 @@ router.post('/addexpense', protectRoute, async (req, res) => {
         // Update the user's transactions, totalexpense, and totalincome
         user.transactions.push(newTransaction._id);
         user.totalexpense += currExpense;
-        user.totalincome -= parseInt(currExpense); // Deduct expense from total income
+        // user.totalincome -= parseFloat(currExpense); // Deduct expense from total income
         console.log(category);
-        
-        user.categorywise[category]+=parseInt(expense);
+
+        user.categorywise[category] += parseFloat(expense);
 
         await user.save();
 
@@ -366,7 +387,6 @@ router.post('/addexpense', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
-
 
 router.post('/addgoal', protectRoute, async (req, res) => {
     try {
@@ -393,7 +413,7 @@ router.post('/addgoal', protectRoute, async (req, res) => {
         }
         // Validate and extract transaction data from the request body
         let { goalName, amount, date } = req.body.goal;
-        
+
         let user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
@@ -401,12 +421,12 @@ router.post('/addgoal', protectRoute, async (req, res) => {
 
         // Create a new gaol document
         const newgoal = await Goal.create({
-            name:goalName,
-            target:amount,
-            deadline:date,
+            name: goalName,
+            target: amount,
+            deadline: date,
             userId
-          });
-      
+        });
+
         user.goals.push(newgoal._id);
         user.save()
         // Repopulate the transactions array after saving
@@ -423,8 +443,6 @@ router.post('/addgoal', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
-
-
 
 router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
     try {
@@ -477,7 +495,7 @@ router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
             });
         }
 
-        goal.saved += parseInt(addMoneyAmount);
+        goal.saved += parseFloat(addMoneyAmount);
         await goal.save();
 
         const description = `Goal: ${goal.name}`;
@@ -498,13 +516,13 @@ router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
             category,
             user: userId,
         });
-        console.log(newTransaction);
+       
 
-        
+
         user.transactions.push(newTransaction._id);
 
         // Optional: If adding money to savings should not decrease income, remove this line
-        user.totalincome -= parseInt(addMoneyAmount);
+        user.totalexpense += parseFloat(addMoneyAmount);
         await user.save();
 
         res.status(200).json({
@@ -518,19 +536,18 @@ router.post('/addmoneytogoal/:id', protectRoute, async (req, res) => {
     }
 });
 
-
 router.delete('/deletegoal/:id', protectRoute, async (req, res) => {
     try {
-      const goalId = req.params.id;
-      const goal = await Goal.findByIdAndDelete(goalId); // Replace with your database logic
-      if (!goal) {
-        return res.status(404).json({ success: false, message: "Goal not found" });
-      }
-      res.json({ success: true, message: "Goal deleted successfully" });
+        const goalId = req.params.id;
+        const goal = await Goal.findByIdAndDelete(goalId); // Replace with your database logic
+        if (!goal) {
+            return res.status(404).json({ success: false, message: "Goal not found" });
+        }
+        res.json({ success: true, message: "Goal deleted successfully" });
     } catch (error) {
-      res.status(500).json({ success: false, message: "Server error", error });
+        res.status(500).json({ success: false, message: "Server error", error });
     }
-  });
+});
 router.post('/addfriend', protectRoute, async (req, res) => {
     try {
         let userId;
@@ -556,7 +573,7 @@ router.post('/addfriend', protectRoute, async (req, res) => {
         }
         // Validate and extract transaction data from the request body
         let { name, phone } = req.body.obj;
-        
+
         let user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
@@ -567,7 +584,7 @@ router.post('/addfriend', protectRoute, async (req, res) => {
             name,
             phone,
         });
-      
+
         user.friends.push(newfriend?._id);
         user.save()
         // Repopulate the transactions array after saving
@@ -583,7 +600,7 @@ router.post('/addfriend', protectRoute, async (req, res) => {
         console.error('Error adding transaction:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  });
+});
 router.post('/splitwithfriend', protectRoute, async (req, res) => {
     try {
         let userId;
@@ -608,17 +625,17 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
             }
         }
         // Validate and extract transaction data from the request body
-        let { friendId,bill,description,category ,userExpense ,friendExpense,paidByuser} = req.body.obj;
-        
+        let { friendId, bill, description, category, userExpense, friendExpense, paidByuser } = req.body.obj;
 
-        
+
+
         let user = await User.findById(userId);
-        let friend=await Friend.findById(friendId);
+        let friend = await Friend.findById(friendId);
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' })
         }
-        
+
         //1000-800U 200F
         // + he owes me 
         // - i owe him
@@ -638,12 +655,12 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
                 personal: false,
             });
             // Update friend's balance to reflect their debt
-            friend.balance += parseInt(friendExpense);
-            user.totalexpense+=parseInt(bill);
-            user.totalincome-=parseInt(bill);
-            user.categorywise.category+=parseInt(userExpense)
-            user.amountspent+=parseInt(bill);
-            user.amountowed += parseInt(friendExpense);
+            friend.balance += parseFloat(friendExpense);
+            user.totalexpense += parseFloat(bill);
+            // user.totalincome -= parseFloat(bill);
+            user.categorywise.category += parseFloat(userExpense)
+            user.amountspent += parseFloat(bill);
+            user.amountowed += parseFloat(friendExpense);
         } else {
             // Friend paid for the bill
             newTransaction = await Transaction.create({
@@ -657,9 +674,9 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
                 moneyweowe: parseFloat(userExpense), // User owes this amount to the friend
                 personal: false,
             });
-            user.amountspent+=parseFloat(bill);
+            user.amountspent += parseFloat(bill);
             user.amountheowes += parseFloat(userExpense);
-           // Update friend's balance to reflect the user's debt
+            // Update friend's balance to reflect the user's debt
             friend.balance -= parseFloat(userExpense);
         }
         friend.save()
@@ -678,6 +695,330 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
         console.error('Error adding transaction:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  });
+});
+router.post('/addnewgroup', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+            console.log('Inside OAuth block, user ID:', userId);
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+
+        // Validate and extract group data from the request body
+        const { name, members } = req.body.newGroup;
+        console.log('Name:', name);
+        console.log('Members:', members);
+        // if (!name || !Array.isArray(members) || members.length === 0) {
+        //     return res.status(400).json({ success: false, message: 'Group name and members are required' });
+        // }
+
+        // Fetch user to ensure they exist
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Create a new group
+        const newGroup = new Group({
+            name,
+            members,
+        });
+
+
+        // Save the new group to the database
+        const savedGroup = await newGroup.save();
+        user.groups.push(savedGroup._id);
+        await user.save();
+        // Update each friend's group reference
+        await Promise.all(
+            members.map(async (friendId) => {
+                const friend = await Friend.findById(friendId);
+                if (friend) {
+                    friend.group = savedGroup._id;
+                    await friend.save();
+                }
+            })
+        );
+
+
+        console.log('New group created successfully:', savedGroup);
+
+        res.status(200).json({
+            success: true,
+            message: 'Group added successfully',
+            group: savedGroup,
+        });
+    } catch (error) {
+        console.error('Error adding group:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+router.delete('/deletegroup/:id', protectRoute, async (req, res) => {
+    try {
+        const groupId = req.params.id;
+
+        console.log(`Attempting to delete group with ID: ${groupId}`);
+
+        // Find and delete the group by ID
+        const group = await Group.findByIdAndDelete(groupId);
+
+        if (!group) {
+            return res.status(404).json({ success: false, message: "Group not found" });
+        }
+
+        res.json({ success: true, message: "Group deleted successfully", deletedGroup: group });
+    } catch (error) {
+        console.error('Error deleting group:', error);
+        res.status(500).json({ success: false, message: "Server error", error });
+    }
+});
+
+router.get('/group/:id', protectRoute, async (req, res) => {
+    try {
+        let userId;
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            // OAuth-based user
+            userId = req.user._id;
+            console.log('Inside OAuth block, user ID:', userId);
+        } else {
+            // Token-based user
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }   
+        let user=await User.findById(userId );
+        const groupId = req.params.id; // Accessing the groupId correctly
+        console.log(groupId);
+
+        const group = await Group.findById(groupId).populate('members');
+        if (!group) {
+            return res.status(404).json({ success: false, message: 'Group not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Group found successfully',
+            group,
+            user
+        });
+    } catch (error) {
+        console.error('Error fetching group:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch group' });
+    }
+});
+
+router.post('/group/billsplit', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            userId = req.user._id;
+        } else {
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+
+        // Validate and extract group data
+        const { totalBill, category, expenses, paidBy, groupId, userExpense } = req.body.expenseData;
+        const user = await User.findById(userId);
+        let group = await Group.findById(groupId);
+    
+        const friendExpense = totalBill - userExpense;
+        let newTransaction;
+        if (paidBy === 'user') {
+            for (const [friendId, balance] of Object.entries(expenses)) {
+                const updatedFriend = await Friend.findByIdAndUpdate(
+                    friendId,
+                    { $inc: { balance: parseFloat(balance) } },
+                    { new: true }
+                );
+            }
+            newTransaction = await Transaction.create({
+                amount: parseFloat(totalBill),
+                group: groupId,
+                groupName:group._id ,
+                grpname:group.name,
+                type: 'expense',
+                category,
+                moneySpent: parseFloat(userExpense),
+                moneyowed: parseFloat(friendExpense),
+                moneyweowe: 0,
+                personal: false,
+            });
+
+        
+            group.moneySpent+=parseFloat(userExpense)
+            await group.save();
+            user.categorywise[category] += parseFloat(userExpense);
+            // user.totalincome -= parseFloat(userExpense);
+            user.totalexpense += parseFloat(userExpense);
+            user.amountspent += parseFloat(userExpense);
+            user.amountowed += parseFloat(friendExpense);
+            user.transactions.push(newTransaction._id);
+            await user.save();
+           
+        }else{
+            let updatedFriend = await Friend.findByIdAndUpdate(
+                paidBy,
+                { $inc: { balance: -parseFloat(userExpense) } },
+                { new: true }
+            );
+            
+             newTransaction = await Transaction.create({
+                amount: parseFloat(totalBill),
+                group: groupId,
+                grpname:group.name,
+                type: 'expense',
+                category,
+                moneySpent: 0,
+                moneyowed: 0,
+                moneyweowe: parseFloat(userExpense),
+                personal: false,
+            });
+
+            group.moneySpent+=parseFloat(userExpense);
+            await group.save();
+
+            user.amountheowes+=parseFloat(userExpense);
+            
+            user.categorywise[category]+=parseFloat(userExpense);
+            user.transactions.push(newTransaction._id);
+            
+            await user.save();
+
+        }
+       
+       
+        group = await Group.findById(groupId).populate('members');
+
+        res.status(200).json({
+            success: true,
+            message: 'Bill added successfully',
+            user,
+            group
+        });
+    } catch (error) {
+        console.error('Error adding group:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+router.get('/getallfriends', protectRoute, async (req, res) => {
+    try {
+        let userId;
+
+        // Determine user authentication type (OAuth or token-based)
+        if (req.user) {
+            userId = req.user._id;
+        } else {
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({ success: false, message: 'No token provided' });
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId;
+            } catch (error) {
+                return res.status(401).json({ success: false, message: 'Invalid token' });
+            }
+        }
+
+        // Validate and extract group data
+        const user = await User.findById(userId).populate('friends');
+        
+
+        res.status(200).json({
+            success: true,
+            message: 'Bill added successfully',
+            user,
+        });
+    } catch (error) {
+        console.error('Error adding group:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// Route to settle balance
+router.post('/settle/:friendId', async (req, res) => {
+  const { friendId } = req.params;
+
+  if (req.user) {
+    userId = req.user._id;
+} else {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        userId = decoded.userId;
+    } catch (error) {
+        return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+}
+
+// Validate and extract group data
+const user = await User.findById(userId);
+const friend=await Friend.findById(friendId)
+
+if(friend.balance>0){
+    user.totalincome+=parseFloat(friend.balance);
+    friend.balance=0;
+    await user.save()
+    await friend.save()
+    
+}
+if(friend.balance<0){
+    user.totalexpense+=Math.abs(parseFloat(friend.balance));
+    friend.balance=0;
+    await user.save()
+    await friend.save()
+}
+const updateduser = await User.findById(userId).populate('friends');
+res.status(200).json({
+    message:"success",
+    user:updateduser})
+});
+
+
+
 
 module.exports = router;

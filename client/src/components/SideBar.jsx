@@ -6,13 +6,15 @@ import {
     Settings,
     Split,
     UsersRound,
+    Scale
   } from "lucide-react";
   import { Link, useLocation } from "react-router-dom";
-  
+import Settle from "../pages/Settle";
   const sideBarItems = [
     { name: "home", icon: <Home />, url: "home" },
     { name: "analytics", icon: <ChartSpline />, url: "analytics" },
-    { name: "split", icon: <Split />, url: "/split" }, 
+    { name: "split", icon: <Split />, url: "/split" },
+    { name: "settle", icon: <Scale />, url: "/settle" },
     { name: "groups", icon: <UsersRound />, url: "/groups" },
     { name: "moneyflow", icon: <HandCoins />, url: "/moneyflow" },
     { name: "savings", icon: <PiggyBank />, url: "/savings" },

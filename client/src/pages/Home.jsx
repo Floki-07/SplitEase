@@ -63,10 +63,13 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
               setUser(userData);
               console.log(userData.goals);
 
-              const resultPercent = userData.totalincome
-                ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.budget)) * 100
+              const expensePercentage = userData.totalincome
+                ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.totalincome)) * 100
                 : 0;
-              setExpenseIncomePercentage(resultPercent);
+
+              const remainingPercentage = expensePercentage;
+
+              setExpenseIncomePercentage(remainingPercentage);
 
               if (userData.avatar) {
                 localStorage.setItem("AvatarUrl", userData.avatar);
@@ -93,11 +96,13 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
           if (response.data.user) {
             const userData = response.data.user;
             setUser(userData);
-            const resultPercent = userData.totalincome
+            const expensePercentage = userData.totalincome
               ? (parseFloat(userData.totalexpense || 0) / parseFloat(userData.totalincome)) * 100
               : 0;
-            setExpenseIncomePercentage(resultPercent);
 
+            const remainingPercentage = expensePercentage;
+
+            setExpenseIncomePercentage(remainingPercentage);
             if (userData.avatar) {
               localStorage.setItem("AvatarUrl", userData.avatar);
               setAvatarUrl(userData.avatar);
@@ -131,15 +136,15 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
               <h1 className="text-white text-[26px] font-bold">
                 Welcome back <span className="text-[#3C9A87]">{user?.username}</span>
               </h1>
-              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹ {user.totalincome}</h1>
+              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹ {user.totalincome - user.totalexpense}</h1>
             </div>
 
             {/* Main Dashboard Section */}
             <div className="flex flex-wrap gap-6 justify-start w-[1200px] mt-[60px]">
               {/* Budget vs Expense */}
               <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
-                <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Budget vs Expense</h2>
-                <CircularProgressBar percentage={Math.min(100, Math.round(expenseIncomePercentage))} title={'Income Used'} />
+                <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]"> Expense vs Balance </h2>
+                <CircularProgressBar percentage={Math.round(expenseIncomePercentage)} title={'Income Used'} />
               </div>
 
               {/* Monthly Stats */}
@@ -147,24 +152,28 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
                 <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]">Monthly Stats</h2>
                 <ul className="space-y-4 text-xl font-normal w-full">
                   <li className="flex justify-between">
-                    <span>Income this month:</span>
-                    <span className="font-bold">{user.totalincome}</span>
+                    <span>Income this month</span>
+                    <span className="font-bold">₹ {user.totalincome}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Expense this month:</span>
-                    <span className="font-bold">{user.totalexpense}</span>
+                    <span className="font-bold">₹ {user.totalexpense}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Your budget:</span>
-                    <span className="font-bold">{user.budget}</span>
+                    <span className="font-bold">₹ {user.budget}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Amount owed:</span>
-                    <span className="font-bold">{user.amountowed}</span>
+                    <span className="font-bold">₹ {user.amountowed}</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span>Amount you owe:</span>
+                    <span className="font-bold">₹ {user.amountheowes}</span>
                   </li>
                   <li className="flex justify-between">
                     <span>Amount Spent in <br />Groups:</span>
-                    <span className="font-bold">{user.amountspent}</span>
+                    <span className="font-bold">₹ {user.amountspent}</span>
                   </li>
                 </ul>
               </div>
@@ -219,7 +228,7 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
                 <div className="flex">
                   <div className="w-[50%] h-[400px]">
                     {
-                      user!==null ? (
+                      user !== null ? (
                         <PieChartComponent user={user} />
                       ) : (
                         <div>Loading...</div> // Display a loading message or spinner

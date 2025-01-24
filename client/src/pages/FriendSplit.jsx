@@ -18,9 +18,7 @@ const FriendSplit = () => {
   const handleSearch = () => {
 
   }
-  const getRandom = () => {
-    return Math.random() < 0.5 ? 1 : 2;
-  }
+ 
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -80,6 +78,8 @@ const FriendSplit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
 
     try {
       const token = localStorage.getItem("token");
@@ -157,7 +157,7 @@ const FriendSplit = () => {
     setFriendName('')
     setisAddModalOpen(false)
   }
-
+  const [toggle, setToggle] = useState(false)
 
 
   return (
@@ -175,30 +175,31 @@ const FriendSplit = () => {
         <div className=" card-container h-[38vh] bg-[background3] w-[24vw] mx-auto mt-4 rounded-lg overflow-y-auto p-2 custom-scrollbar ">
 
           {
-            user?.friends?.map((friend) => (
-              <div key={crypto.randomUUID()} className=" card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100"
+            user?.friends?.map((friend, index) => (
+              <div
+                key={crypto.randomUUID()}
+                className="card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100"
                 onClick={() => setSelectedFriend(friend)}
               >
-
                 <div className="flex justify-between w-[200px] items-center gap-3 min-h-[50px]">
-                  <div className='h-[45px] w-[55px] rounded-[30px]  flex justify-center my-auto bg-white'>
-
-                    <img src={`/images/Friends/${getRandom()}.png`} alt=""
-                      className='object-contain rounded-full' />
+                  <div className='h-[45px] w-[55px] rounded-[30px] flex justify-center my-auto bg-white'>
+                    <img
+                      src={`/images/Friends/${index % 2 === 0 ? '1' : '2'}.png`}
+                      alt="Friend"
+                      className='object-contain rounded-full'
+                    />
                   </div>
-
-
-                  <div className=' w-[200px] '>
-                    <h2 className='text-white text-lg '>{friend.name}</h2>
+                  <div className='w-[200px]'>
+                    <h2 className='text-white text-lg'>{friend.name}</h2>
                   </div>
                 </div>
-
-                <div className='w-[2vw] h-[4vh] '>
-                  <Plus className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105' onClick={() => setIsOpen(true)} />
+                <div className='w-[2vw] h-[4vh]'>
+                  <Plus
+                    className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105'
+                    onClick={() => setIsOpen(true)}
+                  />
                 </div>
               </div>
-
-
             ))
           }
 
