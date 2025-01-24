@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PlusIcon, XIcon, SaveIcon, TrashIcon } from 'lucide-react';
 import axios from 'axios'
+import { toast } from 'sonner';
+
 const SavingsGoalsPage = () => {
   const [goalName, setGoalName] = useState('')
   const [amount, setAmount] = useState('')
@@ -138,7 +140,15 @@ const SavingsGoalsPage = () => {
 
   const handleAddMoney = async (e, goal) => {
     e.preventDefault()
-
+    if (user.totalincome < user.totalexpense + parseFloat(addMoneyAmount)) {
+      toast.warning('No sufficient balance.Please add money to your wallet.', {
+          style: {
+              color: "red"
+          }
+      })
+      setIsAddMoneyModal(false)
+      return;
+  }
     try {
       const token = localStorage.getItem("token");
       let response;

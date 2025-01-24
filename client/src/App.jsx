@@ -11,7 +11,7 @@ import Groups from './pages/Groups'
 import Landing from './pages/Landing'
 import { useEffect } from 'react'
 import Navbar from './components/Navbar'
-import SideBar from './components/Sidebar'
+import SideBar from './components/SideBar'
 import Moneyflow from './pages/Moneyflow'
 import { Settings } from 'lucide-react'
 import SettingsPage from './pages/SettingsPage'
@@ -25,8 +25,9 @@ import BillSplit from './pages/BillSplit'
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import AuthHOC from './hooks/AuthHox'
 import Dashboard from './pages/Dashboard'
+import Settle from './pages/Settle'
 const AppLayout = () => {
-  const [isLanding, setIsLanding] = useState(false)
+  const [isLanding, setIsLanding] = useState(true)
   const location = useLocation()
 
 
@@ -61,6 +62,7 @@ const AppLayout = () => {
           {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
           <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl}  />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settle" element={<Settle />} />
           <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
           <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
           <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />

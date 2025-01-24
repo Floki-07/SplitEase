@@ -201,70 +201,80 @@ const Moneyflow = () => {
             <h1 className='mt-7 text-[26px] text-[--ternary]'>Group Transactions</h1>
 
             <div className='overflow-x-hidden overflow-y-auto border-gray-500 border-opacity mt-4 mx-10 h-[350px] w-[990px] custom-scrollbar mb-10 '> 
-              <motion.table
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                variants={modalVariants}
-                transition={{ duration: 0.5 }}
-                className="w-full text-sm table-auto border border-gray-500 border-opacity-45 min-h-[100px] max-h-[400px]">
-                <thead className="bg-[--background] border-gray-500 border-opacity-45">
-                  <tr className='text-white '>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Name</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Description</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Date</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Total</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Category</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Group Name</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money Spent</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money Owed</th>
-                    <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money You owe</th>
-                  </tr>
-                </thead>
-                <tbody className='text-[--ternary] pr-3'>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="8" className="text-center py-4">
-                        <div className="flex justify-center items-center">
-                          <Loader2 className="animate-spin text-[--ternary]" size={50} />
-                        </div>
-                      </td>
-                    </tr>
-                  ) : user?.transactions && user.transactions.filter(ele => !ele.personal).length > 0 ? (
-                    user.transactions.filter(ele => !ele.personal).reverse().map((ele, index) => (
-                      <tr key={index} className="border-t border-gray-200 border-opacity-25 bg-[--background2] h-[50px]">
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.friendname || 'N/A'}</td>
+            <motion.table
+  initial="hidden"
+  animate="visible"
+  exit="hidden"
+  variants={modalVariants}
+  transition={{ duration: 0.5 }}
+  className="w-full text-sm table-auto border border-gray-500 border-opacity-45 min-h-[100px] max-h-[400px]"
+>
+  <thead className="bg-[--background] border-gray-500 border-opacity-45">
+    <tr className="text-white">
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Group/Friend Name</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Date</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Total</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Category</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money Spent</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money Owed</th>
+      <th className="px-4 py-2 text-left border-x border-gray-500 border-opacity-45">Money You Owe</th>
+    </tr>
+  </thead>
+  <tbody className="text-[--ternary] pr-3">
+    {loading ? (
+      <tr>
+        <td colSpan="8" className="text-center py-4">
+          <div className="flex justify-center items-center">
+            <Loader2 className="animate-spin text-[--ternary]" size={50} />
+          </div>
+        </td>
+      </tr>
+    ) : user?.transactions && user.transactions.filter((ele) => !ele.personal).length > 0 ? (
+      user.transactions
+        .filter((ele) => !ele.personal)
+        .reverse()
+        .map((ele, index) => (
+          <tr
+            key={index}
+            className="border-t border-gray-200 border-opacity-25 bg-[--background2] h-[50px]"
+          >
+            <td
+              className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate ${
+                ele.grpname ? "text-blue-600 font-semibold" : "text-green-600 font-semibold"
+              }`}
+            >
+              {ele.grpname || ele.friendname}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">
+              {ele.date.split("T")[0]}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate text-yellow-500">
+              {ele.amount}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">
+              {ele.category || "N/A"}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">
+              {ele.moneySpent}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate text-[--textgreen]">
+              +{ele.moneyowed}
+            </td>
+            <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate text-red-500">
+              {ele.moneyweowe}
+            </td>
+          </tr>
+        ))
+    ) : (
+      <tr>
+        <td colSpan="8" className="text-center py-4 text-gray-500">
+          No transactions with friends or groups yet
+        </td>
+      </tr>
+    )}
+  </tbody>
+</motion.table>
 
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.description}</td>
-
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.date.split('T')[0]}</td>
-
-                        <td className={`px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate
-             text-yellow-500`}>
-
-                          <div className='flex'>
-
-                            {ele.amount}
-                          </div>
-                        </td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.category || 'N/A'}</td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">
-                          {ele.groupName ? ele.groupName : 'N/A'}
-                        </td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.moneySpent}</td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate">{ele.moneyowed}</td>
-                        <td className="px-4 py-2 border-x border-gray-500 border-opacity-45 h-[50px] truncate text-red-500">{ele.moneyweowe}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="text-center py-4 text-gray-500">
-                        No transactions with friends or groups yet
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </motion.table>
 
 
             </div>

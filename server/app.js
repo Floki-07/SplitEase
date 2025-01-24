@@ -22,7 +22,6 @@ app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
-  
   allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials', 'Authorization', 'x-correlation-id'],
   credentials: true // mandoatory for google auths
 }));

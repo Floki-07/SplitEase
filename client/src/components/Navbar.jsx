@@ -12,7 +12,6 @@ function NavBar({ isLanding }) {
   const [user, setUser] = useState(null)
   const [modalopen, setModalopen] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState('')
-  console.log(isLanding);
   const [loading, setLoading] = useState(false)
   const handleModalOpen = () => {
     setModalopen(true)
