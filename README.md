@@ -17,7 +17,7 @@ SplitEase is a powerful and user-friendly **money expense tracker** and **bill-s
 ## 🔧 **Tech Stack**
 - **Frontend**: React.js, Tailwind CSS
 - **Backend**: Node.js, Express.js
-- **Database**: Mysql or MongoDB
+- **Database**: MongoDB
 
 
 ---
