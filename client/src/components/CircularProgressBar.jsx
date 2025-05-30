@@ -18,8 +18,7 @@ const CircularProgressBar = ({
   const strokeWidth = strokeInput; // Width of the stroke
   const circumference = 2 * Math.PI * radius; // Circumference of the circle
   const offset = circumference - (percentage / 100) * circumference; // Offset for progress
-  console.log('Percentage',percentage);
-  console.log('display',displayPercentage);
+
   
   
   return (

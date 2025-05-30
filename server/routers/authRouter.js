@@ -626,7 +626,8 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
         }
         // Validate and extract transaction data from the request body
         let { friendId, bill, description, category, userExpense, friendExpense, paidByuser } = req.body.obj;
-
+        console.log('Category:',category)
+        console.log('paidby:',paidByuser)
 
 
         let user = await User.findById(userId);
@@ -654,13 +655,19 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
                 moneyweowe: 0, // User owes nothing since they paid
                 personal: false,
             });
+            let amountToBePaidbyuser=0;
             // Update friend's balance to reflect their debt
+            if(friend.balance < 0){
+                amountToBePaidbyuser=Math.abs(friend.balance); //500
+            }
             friend.balance += parseFloat(friendExpense);
             user.totalexpense += parseFloat(bill);
-            // user.totalincome -= parseFloat(bill);
-            user.categorywise.category += parseFloat(userExpense)
+           
             user.amountspent += parseFloat(bill);
-            user.amountowed += parseFloat(friendExpense);
+            user.amountheowes-=parseFloat(amountToBePaidbyuser);
+            if( friend.balance !=0 ){
+                user.amountowed += parseFloat(friendExpense);
+            }
         } else {
             // Friend paid for the bill
             newTransaction = await Transaction.create({
@@ -674,14 +681,17 @@ router.post('/splitwithfriend', protectRoute, async (req, res) => {
                 moneyweowe: parseFloat(userExpense), // User owes this amount to the friend
                 personal: false,
             });
+            // let amountToBepaidByfriend=parseFloat(friend.balance);
             user.amountspent += parseFloat(bill);
             user.amountheowes += parseFloat(userExpense);
+            
             // Update friend's balance to reflect the user's debt
             friend.balance -= parseFloat(userExpense);
         }
-        friend.save()
+        await friend.save()
         user.transactions.push(newTransaction);
-        user.save()
+        user.categorywise[category] += parseFloat(userExpense);
+        await user.save()
         // Repopulate the transactions array after saving
         user = await User.findById(userId).populate('friends');
 
@@ -770,6 +780,7 @@ router.post('/addnewgroup', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
+
 router.delete('/deletegroup/:id', protectRoute, async (req, res) => {
     try {
         const groupId = req.params.id;
@@ -939,6 +950,7 @@ router.post('/group/billsplit', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
+
 router.get('/getallfriends', protectRoute, async (req, res) => {
     try {
         let userId;
@@ -974,7 +986,6 @@ router.get('/getallfriends', protectRoute, async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 });
-
 // Route to settle balance
 router.post('/settle/:friendId', async (req, res) => {
   const { friendId } = req.params;
@@ -1000,15 +1011,17 @@ const user = await User.findById(userId);
 const friend=await Friend.findById(friendId)
 
 if(friend.balance>0){
-    user.totalincome+=parseFloat(friend.balance);
+    user.totalexpense-=parseFloat(friend.balance);
+    user.amountowed-=parseFloat(friend.balance)
     friend.balance=0;
     await user.save()
-    await friend.save()
+    await friend.save();
     
 }
 if(friend.balance<0){
     user.totalexpense+=Math.abs(parseFloat(friend.balance));
     friend.balance=0;
+    user.amountheowes-=Math.abs(parseFloat(friend.balance));
     await user.save()
     await friend.save()
 }
@@ -1017,7 +1030,6 @@ res.status(200).json({
     message:"success",
     user:updateduser})
 });
-
 
 
 

@@ -6,7 +6,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChartComponent = ({ user }) => {
   // Safely get categorywise or provide default values
-  console.log('Inside pie chart',user.categorywise);
   
   const categorywise = user.categorywise || {
     Grocery: 0,
@@ -19,7 +18,6 @@ const PieChartComponent = ({ user }) => {
   };
 
   const categoryWiseValues = Object.values(categorywise );
-  console.log(categoryWiseValues);
   
   // Validate the data is an array of numbers
   const isValidData =

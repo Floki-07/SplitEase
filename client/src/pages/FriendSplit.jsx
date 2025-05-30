@@ -164,15 +164,15 @@ const FriendSplit = () => {
     <div className=' flex justify-center items-center w-full h-full'>
       <div className='fixed h-[65vh] w-[28vw] bg-[--background2] rounded-md flex flex-col p-2 shadow-lg shadow-black translate-y-[-10%]'>
 
-        <h1 className='text-[25px] font-semibold text-center'>Select friend</h1>
-        <div className='mt-3 bg-[--background] w-[20vw] mx-auto py-2 rounded-[20px] h-[40px] pl-2 flex gap-3 justify-start outline-none focus:outline-none' >
+        <h1 className='text-[31px] text-[#3C9A87]  font-semibold text-center'>Select friend</h1>
+        <div className='mt-1 bg-[--background] w-[20vw] mx-auto py-2 rounded-[20px] h-[40px] pl-2 flex gap-3 justify-start outline-none focus:outline-none' >
 
           <div ><Search className='hover:cursor-pointer hover:text-purple-600' onClick={handleSearch} /></div>
           <input type="text" name="" id="" className=' text-[--ternary] bg-inherit outline-none border-solid  border-b border-[#B8B8FF] ' placeholder='Search' />
 
         </div>
 
-        <div className=" card-container h-[38vh] bg-[background3] w-[24vw] mx-auto mt-4 rounded-lg overflow-y-auto p-2 custom-scrollbar ">
+        <div className=" card-container h-[38vh] bg-[background3] w-[24vw] mx-auto mt-2 rounded-lg overflow-y-auto p-2 custom-scrollbar ">
 
           {
             user?.friends?.map((friend, index) => (

@@ -1,7 +1,8 @@
 import axios from "axios";
 import { X, CircleUser, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 // import NavbarImage from "./NavbarImage";
 import React, { Suspense, lazy } from 'react';
 
@@ -83,7 +84,7 @@ function NavBar({ isLanding }) {
     if (isLanding === false) {
       fetchUserData();
     }
-  }, [isLanding, setUser, ]);
+  }, [isLanding, setUser,]);
 
 
 
@@ -92,21 +93,36 @@ function NavBar({ isLanding }) {
       className={`flex justify-between ${isLanding ? "absolute z-10" : "border-b"
         } border-[--border-line] items-center h-[60px] pr-5 w-full`}
     >
-      <div
-        className={`text-[20px] w-[60px] ${isLanding ? "" : "border-r"
+      {!isLanding && (
+        <div
+        className={`text-[20px] w-[60px] ${isLanding ? "" : "border- r "
           } border-[--border-line] h-full flex justify-center items-center`}
       >
-        {/* Placeholder for logo */}
+        <Link to='/'>
+        <img src="/images/logo.png" alt="" srcset="" className="rounded-full ml-2 mt-2 mb-2" />
+        </Link>
       </div>
+      )}
 
       <div className="flex gap-10 items-center relative">
         {/* Display Avatar if not Landing */}
         {!isLanding &&
           (<>
             <div className="w-[50px] h-[50px] relative" onClick={handleModalOpen}>
-              <Suspense fallback={<div className="w-[50px] h-[50px] bg-gray-200 animate-pulse" />}>
-                <NavbarImage user={user} />
-              </Suspense>
+                {user?.avatar ?
+                  <img
+                    src={user?.avatar}
+                    alt="Avatar"
+                    className="h-[50px] w-[50px] rounded-full"
+                  // onError={(e) => {
+                  //   e.target.src = "/images/Profile.jpg";
+                  // }}
+                  />
+
+                  :
+                  <img src="/images/Profile.jpg" className="h-[52px] w-[55px] rounded-full" />
+
+                }
             </div>
             {modalopen &&
               <div className="absolute top-[65px] flex flex-col  right-[5px]  bg-[--background3] w-[230px] h-[270px] rounded-sm">
@@ -117,14 +133,20 @@ function NavBar({ isLanding }) {
 
                   <div className="w-full flex flex-col gap-3  text-[--ternary] font-semibold justify-center items-center">
                     <div className="w-[70px] h-[70px] relative mx-auto" onClick={handleModalOpen}>
-                      <img
-                        src={user?.avatar}
-                        alt="Avatar"
-                        className="h-[70px] w-[70px] rounded-full"
-                      // onError={(e) => {
-                      //   e.target.src = "/images/Sample.png";
-                      // }}
-                      />
+                      {user?.avatar ?
+                        <img
+                          src={user?.avatar}
+                          alt="Avatar"
+                          className="h-[70px] w-[70px] rounded-full"
+                        // onError={(e) => {
+                        //   e.target.src = "/images/Profile.jpg";
+                        // }}
+                        />
+
+                        :
+                        <img src="/images/Profile.jpg" className="h-[70px] w-[70px] rounded-full" />
+
+                      }
 
                     </div>
                     <h1 className="text-[20px] font-normal">Hi , <span className="font-semibold text-[--heading]">{user?.username || 'User'}</span></h1>
