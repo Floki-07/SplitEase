@@ -10,12 +10,12 @@ const Onboarding = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('User Info:',budget);
+        // console.log('User Info:',budget);
         // Perform further actions like API calls
 
         try {
             const token = localStorage.getItem("token");
-            console.log(token);
+            // console.log(token);
             
             let response;
 
@@ -34,7 +34,7 @@ const Onboarding = () => {
                     );
             
                     if (response.data.success) {
-                        console.log("Onboarding successful:", response.data.message);
+                        // console.log("Onboarding successful:", response.data.message);
                         // Optionally redirect or update UI based on success
                         window.location.reload();
                     } else {

@@ -163,14 +163,14 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
                     <span>Your budget:</span>
                     <span className="font-bold">₹ {user.budget}</span>
                   </li>
-                  <li className="flex justify-between">
+                  {/* <li className="flex justify-between">
                     <span>Amount owed:</span>
                     <span className="font-bold">₹ {user.amountowed}</span>
-                  </li>
-                  <li className="flex justify-between">
+                  </li> */}
+                  {/* <li className="flex justify-between">
                     <span>Amount you owe:</span>
                     <span className="font-bold">₹ {user.amountheowes}</span>
-                  </li>
+                  </li> */}
                   <li className="flex justify-between">
                     <span>Amount Spent in <br />Groups:</span>
                     <span className="font-bold">₹ {user.amountspent}</span>

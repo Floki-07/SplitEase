@@ -1,198 +1,275 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { color } from 'framer-motion';
+import { DollarSign, X, Plus, Tag, Calendar, FileText, AlertCircle } from 'lucide-react';
 
 const AddExpense = ({ setExpensOpen, user, setUser }) => {
     const [expense, setExpense] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [category, setCategory] = useState('');
-    const [errorMessage, setErrorMessage] = useState(''); // State for error message
-    const [showErrorModal, setShowErrorModal] = useState(false); // State for error modal
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // 🆕 Loading state added
 
-    // Handle form submission
+    const categoryOptions = [
+        { value: 'grocery', label: 'Grocery' },
+        { value: 'restaurant', label: 'Restaurant' },
+        { value: 'commute', label: 'Commute' },
+        { value: 'bills', label: 'Bills' },
+        { value: 'stationary', label: 'Stationary' },
+        { value: 'trips', label: 'Trips' },
+        { value: 'micellaneous', label: 'Miscellaneous' }
+    ];
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const expenseData = { expense, description, date, category };
-        setErrorMessage(''); // Clear previous errors
+        setErrorMessage('');
+        setIsLoading(true);
+
         if (user.totalincome < user.totalexpense + parseFloat(expense)) {
-            toast.warning('No sufficient balance.Please add money to your wallet.', {
-                style: {
-                    color: "red"
-                }
-            })
-            setExpensOpen(false)
+            toast.warning('No sufficient balance. Please add money to your wallet.', {
+                style: { color: "red" }
+            });
+            setExpensOpen(false);
+            setIsLoading(false);
             return;
         }
+
         try {
             const token = localStorage.getItem("token");
-            console.log("Token:", token);
-
             let response;
 
             if (token) {
-                // Token-based request for adding expense
                 try {
                     response = await axios.post(
-                        `http://localhost:3000/api/addexpense`,  // API endpoint
-                        { expenseData },  // Payload with expense data
+                        `http://localhost:3000/api/addexpense`,
+                        { expenseData },
                         {
                             headers: {
-                                Authorization: `Bearer ${token}`,  // Attach token in Authorization header
+                                Authorization: `Bearer ${token}`,
                                 "Content-Type": "application/json",
                             },
                         }
                     );
 
                     if (response.data.success) {
-                        console.log("Expense added successfully:", response.data.message);
                         setUser(response.data.user);
                         toast.success('Expense added successfully', {
-                            style: {
-                                color: "red",
-                            } // Set the text color to green
-
-                        })
-                        setExpensOpen(false); // Close the expense modal
+                            style: { color: "red" }
+                        });
+                        setExpensOpen(false);
                     } else {
                         setErrorMessage(response.data.message || 'An error occurred');
-                        setShowErrorModal(true); // Show error modal
+                        setShowErrorModal(true);
                     }
                 } catch (tokenError) {
                     console.error("Token-based request failed:", tokenError);
                     setErrorMessage('Error during token-based request');
-                    setShowErrorModal(true); // Show error modal
+                    setShowErrorModal(true);
                 }
             }
 
-            // OAuth-based request (if no token, use cookies)
             try {
                 response = await axios.post(
-                    `http://localhost:3000/api/addexpense`,  // API endpoint
-                    { expenseData }, // Include the expense data as payload
+                    `http://localhost:3000/api/addexpense`,
+                    { expenseData },
                     {
-                        withCredentials: true, // Allows sending cookies for OAuth
+                        withCredentials: true,
                         headers: {
                             "Content-Type": "application/json",
-                            "x-correlation-id": Date.now().toString(), // Correlation ID for tracking
+                            "x-correlation-id": Date.now().toString(),
                         },
                     }
                 );
-                console.log(response.data.message);
-
                 if (response.data.success) {
-                    console.log("Expense added successfully:", response?.data?.message);
                     setUser(response.data.user);
                     setExpensOpen(false);
                     toast.success('Expense added successfully', {
-                        style: {
-                            color: "red",
-                        } // Set the text color to green
-
-                    }) // Close the expense modal
+                        style: { color: "red" }
+                    });
                 } else {
-                    // setErrorMessage(response.data.message || 'An error occurred');
-                    setShowErrorModal(true); // Show error modal
+                    setShowErrorModal(true);
                 }
             } catch (oauthError) {
                 console.error("OAuth-based request failed:", oauthError);
-                // setErrorMessage('OAuth-based request failed');
-                setShowErrorModal(true); // Show error modal
+                setShowErrorModal(true);
             }
 
         } catch (error) {
-            // console.error("Critical error during request process:", error);
-            // setErrorMessage('Internal server error');
-            // setShowErrorModal(true); // Show error modal
             console.log(error);
-
         }
-        // Reset the form fields
+
+        setIsLoading(false);
         setExpense('');
         setDescription('');
         setDate('');
         setCategory('');
     };
 
-
     return (
         <>
             {showErrorModal && (
-                <div className="h-full w-full absolute bg-black/50 top-0 left-0 flex items-center justify-center z-[30]">
-                    <div className="bg-white p-6 rounded-md shadow-md flex flex-col items-center">
-                        <h2 className="text-red-600 text-lg font-bold">Error</h2>
-                        {/* <p className="text-gray-700 mt-2">{errorMessage}</p> */}
-                        <p className="text-gray-700 mt-2">Expense should be less than income</p>
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#121944] rounded-xl shadow-2xl p-6 max-w-xs w-full mx-4 border border-[#262C5A]">
+                        <div className="flex items-center justify-center mb-4">
+                            <div className="bg-[#E00C0C]/20 rounded-full p-2">
+                                <AlertCircle className="w-6 h-6 text-[#E00C0C]" />
+                            </div>
+                        </div>
+                        <h2 className="text-lg font-bold text-white text-center mb-3">Oops!</h2>
+                        <p className="text-[#B8B8FF] text-center mb-6 text-sm leading-relaxed">
+                            {errorMessage || 'Expense should be less than income'}
+                        </p>
                         <button
                             onClick={() => setShowErrorModal(false)}
-                            className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                            className="w-full bg-[#E00C0C] hover:bg-[#E00C0C]/90 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm"
                         >
-                            OK
+                            Got it
                         </button>
                     </div>
                 </div>
             )}
+
+            {/* Main Modal */}
             <div
                 onClick={() => setExpensOpen(false)}
-                className="h-full w-full absolute bg-black/50 top-0 left-0 flex items-center z-[10]"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-40 p-2"
             >
                 <div
-                    className="relative bg-[#121944] h-[360px] w-[320px] mx-auto rounded-md translate-x-8 translate-y-[-10%] z-[20] px-8 py-6 flex flex-col items-start gap-3"
+                    className="relative bg-[#121944] rounded-2xl shadow-2xl border border-[#262C5A] w-full max-w-sm mx-2 overflow-hidden"
                     onClick={(e) => e.stopPropagation()}
+                    style={{ maxHeight: '90vh' }}
                 >
-                    <h1 className="text-center text-white text-[22px] font-semibold w-full">ADD EXPENSE</h1>
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                        <input
-                            type="text"
-                            value={expense}
-                            onChange={(e) => setExpense(e.target.value)}
-                            className="text-md outline-none text-white w-[240px] bg-[var(--background)] placeholder:text-gray-400 h-[6vh] pl-1 py-2"
-                            placeholder="Enter Expense"
-                            required
-                        />
-                        <input
-                            type="text"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="text-md outline-none text-white w-[240px] bg-[var(--background)] placeholder:text-gray-400 h-[6vh] pl-1 py-2"
-                            placeholder="Enter Description"
-                            required
-                        />
-                        <label className="text-[--ternary] text-sm">Enter Date</label>
-                        <input
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className="text-md outline-none text-white w-[240px] bg-[var(--background)] placeholder:text-gray-400 h-[6vh] pl-1 py-2"
-                            required
-                        />
-                        <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="bg-[--background2] border border-opacity-20 border-gray-100 py-1 outline-none rounded-sm px-2 w-[240px] text-white h-[40px]"
-                            required
+                    {/* Header */}
+                    <div className="relative bg-gradient-to-r from-[#796FFE]/10 to-[#3C9A87]/10 p-4 border-b border-[#262C5A]">
+                        <button
+                            onClick={() => setExpensOpen(false)}
+                            className="absolute top-3 right-3 p-1 hover:bg-white/10 rounded-full transition-all duration-300 group"
                         >
-                            <option value="" disabled>
-                                Select Category
-                            </option>
-                            <option value="grocery">Grocery</option>
-                            <option value="restaurant">Restaurant</option>
-                            <option value="commute">Commute</option>
-                            <option value="bills">Bills</option>
-                            <option value="stationary">Stationary</option>
-                            <option value="trips">Trips</option>
-                            <option value="micellaneous">Micellaneous</option>
-                        </select>
-                        <div className="flex items-center justify-center w-full">
-                            <button
-                                type="submit"
-                                className="hover:bg-violet-500 text-center bg-[--primary] py-2 px-3 w-[7vw] rounded-md text-bold text-white"
-                            >
-                                Save
-                            </button>
+                            <X className="w-4 h-4 text-[#B8B8FF] group-hover:text-white" />
+                        </button>
+                        <div className="flex items-center gap-2">
+                            <div className="bg-[#796FFE] p-2 rounded-lg">
+                                <Plus className="w-4 h-4 text-white" />
+                            </div>
+                            <h1 className="text-lg font-semibold text-white">Add Expense</h1>
                         </div>
-                    </form>
+                        <p className="text-[#B8B8FF] mt-1 text-xs">Track your spending effortlessly</p>
+                    </div>
+
+                    {/* Form Content */}
+                    <div className="p-4 space-y-4">
+                        {/* Amount Input */}
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-2 text-[#B8B8FF] text-sm font-medium">
+                                <DollarSign className="w-3 h-3" />
+                                Amount
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value={expense}
+                                    onChange={(e) => setExpense(e.target.value)}
+                                    className="w-full bg-[#050D35] border border-[#262C5A] rounded-lg px-3 py-2 text-white placeholder-[#B8B8FF]/40 focus:outline-none focus:ring-1 focus:ring-[#796FFE] focus:border-[#796FFE] transition-all duration-300 text-sm"
+                                    placeholder="0.00"
+                                    required
+                                />
+                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                    <span className="text-[#B8B8FF]/60 text-sm">₹</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Description Input */}
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-2 text-[#B8B8FF] text-sm font-medium">
+                                <FileText className="w-3 h-3" />
+                                Description
+                            </label>
+                            <input
+                                type="text"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="w-full bg-[#050D35] border border-[#262C5A] rounded-lg px-3 py-2 text-white placeholder-[#B8B8FF]/40 focus:outline-none focus:ring-1 focus:ring-[#796FFE] focus:border-[#796FFE] transition-all duration-300 text-sm"
+                                placeholder="What did you spend on?"
+                                required
+                            />
+                        </div>
+
+                        {/* Date Input */}
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-2 text-[#B8B8FF] text-sm font-medium">
+                                <Calendar className="w-3 h-3" />
+                                Date
+                            </label>
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                className="w-full bg-[#050D35] border border-[#262C5A] rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-[#796FFE] focus:border-[#796FFE] transition-all duration-300 text-sm"
+                                required
+                            />
+                        </div>
+
+                        {/* Category Select */}
+                        <div className="space-y-1">
+                            <label className="flex items-center gap-2 text-[#B8B8FF] text-sm font-medium">
+                                <Tag className="w-3 h-3" />
+                                Category
+                            </label>
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                className="w-full bg-[#050D35] border border-[#262C5A] rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-1 focus:ring-[#796FFE] focus:border-[#796FFE] transition-all duration-300 appearance-none cursor-pointer text-sm"
+                                required
+                            >
+                                <option value="" disabled className="bg-[#050D35] text-[#B8B8FF]/60">
+                                    Choose a category
+                                </option>
+                                {categoryOptions.map((option) => (
+                                    <option
+                                        key={option.value}
+                                        value={option.value}
+                                        className="bg-[#050D35] text-white"
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Balance Info */}
+                        <div className="bg-[#262C5A] rounded-lg p-3 border border-[#262C5A]">
+                            <div className="flex justify-between items-center text-sm">
+                                <span className="text-[#B8B8FF]">Available Balance:</span>
+                                <span className="text-[#2DE33F] font-semibold">
+                                    ₹{(user.totalincome - user.totalexpense).toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isLoading}
+                            className="w-full bg-[#796FFE] hover:bg-[#796FFE]/90 disabled:bg-[#796FFE]/50 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    Adding...
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className="w-4 h-4" />
+                                    Add Expense
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
         </>
