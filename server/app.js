@@ -32,10 +32,21 @@ app.use(cors({
 }));
 
 // session middleware
+// app.use(session({
+//   secret: '1234',
+//   resave: false,
+//   saveUninitialized: false,
+// }));
+
+
 app.use(session({
-  secret: '1234',
+  secret: '1234', // Use a strong secret in production
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: true,        // true for HTTPS (Render), false for localhost
+    sameSite: 'none'     // Required for cross-origin cookies
+  }
 }));
 
 // passport middleware
@@ -45,6 +56,8 @@ app.use(passport.session());
 app.use('/api', authRouter)
 app.use('/api/goals', goalRoutes);
 
+
+// require('./config/passport');
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
@@ -55,7 +68,6 @@ app.get("/auth/google/callback", passport.authenticate("google", {
 app.get('/auth/login/success', async (req, res) => {
   if (req.isAuthenticated()) 
   {
-    
     res.status(200).json({
       success: true,
       message: "successful",

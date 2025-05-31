@@ -52,7 +52,7 @@ const Signup = () => {
         </div>
 
         <div className="mt-8">
-          <button
+          {/* <button
             className="h-[50px] w-[73%] bg-[var(--background3)] mx-auto mt-2 text-white flex justify-center items-center gap-3 px-2 rounded-[5px] text-[--ternary]"
             onClick={handleOauth}
           >
@@ -64,7 +64,7 @@ const Signup = () => {
             <hr className="border-[--ternary] opacity-20 h-[1px] w-[120px]" />
             <p className="mx-1 text-[--ternary]">OR</p>
             <hr className="border-[--ternary] opacity-20 h-[1px] w-[120px]" />
-          </div>
+          </div> */}
 
           {error && (
             <div className="text-red-500 text-md text-center mt-2 mb-1">{error}</div>

@@ -47,6 +47,7 @@ const AuthHOC = ({ children }) => {
 
           if (response.data?.success) {
             // Optionally store OAuth token in localStorage (if provided)
+            console.log("OAuth user authenticated:", response.data);
             if (response.data.token) {
               // localStorage.setItem("token", response.data.token);
             }
