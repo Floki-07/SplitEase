@@ -135,57 +135,94 @@ const Settle = () => {
    const navigate=useNavigate()
 
     return (
-        <div className="container h-[80vh] flex justify-center items-center">
-    <div className="mt-2 h-[440px] w-[540px] bg-[--background2] shadow-lg shadow-black rounded-md">
-        <div className="flex items-center h-[10vh] gap-5 mt-2 w-[80%] mx-auto">
-            <h1 className="text-[#3C9A87] mx-auto text-[27px] mt-2 font-semibold">Settle payments with friends</h1>
-        </div>
-        <div className="card-container custom-scrollbar h-[38vh] pb-2 w-[540px] pr-5 mx-auto rounded-lg overflow-y-auto overflow-x-hidden p-2 mt-4 ">
-            {members.length===0 ?<>
-            <div className='w-full text-gray-300  text-center font-bold text-lg mt-10'>You dont have any friends</div>
-          <div className='w-full flex justify-center '>
-          <button onClick={()=>navigate('/split/friendsplit')} className='px-4 py-1 rounded-md text-blue-500 mx-auto text-center font-bold text-lg mt-10 
-          bg-[--background3]'> Click here to add new friends</button>
-          </div>
-            </>:
-            (
-                members.map((member) => (
-                    <div
-                        key={member._id}
-                        className={`card mt-3 w-full h-[70px] rounded-md shadow-md shadow-black flex px-1 justify-between items-center transition-all delay-100 bg-[--background]`}
-                    >
-                        <div className="w-[340px] bg-re-400 flex items-center justify-between gap-3 mx-auto">
-                            <div className="flex items-center gap-3">
-                                <h2 className="text-white text-[18px]">{member.name}</h2>
-                            </div>
-                            <div className={`w-[150px] text-sm ${member.balance === 0 ? 'text-gray-500' : member.balance > 0 ? 'text-[--textgreen]' : 'text-[--textred]'}`}>
-                                <span>
-                                    {member.balance === 0 ? 'You both are even' : member.balance > 0 ? 'Owes you' : 'You owe'}
-                                </span>
-                            </div>
-                            <h1 className={`text-[18px] ${member.balance === 0 ? 'text-gray-500' : member.balance > 0 ? 'text-[--textgreen]' : 'text-[--textred]'}`}>
-                                {member.balance === 0 ? `0` : member.balance > 0 ? `+${member.balance}` : `${member.balance}`}
-                            </h1>
-                        </div>
-                        {member.balance !== 0 && (
-                            <div className="flex items-center gap-4">
-                                <button
-                                    onClick={() => settlePayment(member._id)}
-                                    className={`${member.balance > 0 ? 'bg-[#28a745]' : 'bg-[#dc3545]'
-                                        } hover:scale-105 text-center py-2 px-3 w-[7vw] rounded-md text-bold text-white`}
-                                >
-                                    <span className="font-semibold">{member.balance > 0 ? 'Settle' : 'Paid'}</span>
-                                </button>
-                            </div>
-                        )}
-                        
-                    </div>
-                ))
-            )
-            }
-        </div>
+ <div className="container h-[80vh] flex justify-center items-center">
+  <div className="mt-2 h-[440px] w-[95%] max-w-[410px] bg-[--background2] shadow-lg shadow-black rounded-lg">
+    <div className="flex items-center h-[10vh] gap-5 mt-2 w-[90%] mx-auto">
+      <h1 className="text-[--heading] mx-auto text-[24px] sm:text-[27px] font-semibold text-center">
+        Settle payments with friends
+      </h1>
     </div>
+
+    <div className="card-container custom-scrollbar h-[38vh] pb-2 w-[100%] px-4 mx-auto rounded-lg overflow-y-auto overflow-x-hidden mt-2">
+      {members.length === 0 ? (
+        <>
+          <div className="w-full text-gray-300 text-center font-bold text-lg mt-10">
+            You don’t have any friends
+          </div>
+          <div className="w-full flex justify-center mt-4">
+            <button
+              onClick={() => navigate('/split/friendsplit')}
+              className="px-4 py-2 rounded-md text-[--primary] font-bold bg-[--background3] hover:brightness-110 transition-all"
+            >
+              Click here to add new friends
+            </button>
+          </div>
+        </>
+      ) : (
+        members.map((member) => (
+          <div
+            key={member._id}
+            className="mt-3 w-full rounded-md shadow-md shadow-black flex justify-between items-center px-3 py-3 bg-[--background] transition-all delay-100"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-3">
+              <div className="flex items-center gap-3">
+                <h2 className="text-white text-[17px] font-medium">{member.name}</h2>
+              </div>
+
+              <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                <div
+                  className={`text-sm ${
+                    member.balance === 0
+                      ? 'text-gray-500'
+                      : member.balance > 0
+                      ? 'text-[--textgreen]'
+                      : 'text-[--textred]'
+                  }`}
+                >
+                  <span>
+                    {member.balance === 0
+                      ? 'You both are even'
+                      : member.balance > 0
+                      ? 'Owes you'
+                      : 'You owe'}
+                  </span>
+                </div>
+
+                <h1
+                  className={`text-[17px] font-semibold ${
+                    member.balance === 0
+                      ? 'text-gray-500'
+                      : member.balance > 0
+                      ? 'text-[--textgreen]'
+                      : 'text-[--textred]'
+                  }`}
+                >
+                  {member.balance === 0
+                    ? `₹0`
+                    : member.balance > 0
+                    ? `+₹${member.balance}`
+                    : `₹${member.balance}`}
+                </h1>
+
+                {member.balance !== 0 && (
+                  <button
+                    onClick={() => settlePayment(member._id)}
+                    className={`${
+                      member.balance > 0 ? 'bg-[#28a745]' : 'bg-[#dc3545]'
+                    } hover:scale-105 transition-transform py-2 px-4 rounded-md text-white font-semibold`}
+                  >
+                    {member.balance > 0 ? 'Settle' : 'Paid'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
 </div>
+
 
     );
 };

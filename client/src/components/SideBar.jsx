@@ -8,23 +8,25 @@ import {
   UsersRound,
   ChevronRight,
   ChevronLeft,
+  User,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 const sideBarItems = [
   { name: "Home", icon: <Home />, url: "home" },
-  { name: "Analytics", icon: <ChartSpline />, url: "analytics" },
+  { name: "Transactions", icon: <HandCoins />, url: "/moneyflow" },
+  // { name: "Analytics", icon: <ChartSpline />, url: "analytics" },
   { name: "Split", icon: <Split />, url: "/split" },
   { name: "Settle", icon: <Scale />, url: "/settle" },
   { name: "Groups", icon: <UsersRound />, url: "/groups" },
-  { name: "Money Flow", icon: <HandCoins />, url: "/moneyflow" },
-  { name: "Savings", icon: <PiggyBank />, url: "/savings" },
+  { name: "Manage Goals", icon: <PiggyBank />, url: "/savings" },
+  // { name: "Add Friend", icon: <User />, url: "split/friendsplit" },
 ];
 
 function SideBar({ isLanding }) {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -37,10 +39,10 @@ function SideBar({ isLanding }) {
           } bg[--secondary] transition-all duration-300 ease-in-out border-r border-[--border-line] h-full flex flex-col py-5`}
         >
           {/* Toggle Button */}
-          <div className="flex justify-end px-2 mb-6">
+          <div className="flex justify-end px-2 mb-6  ">
             <button
               onClick={toggleSidebar}
-              className="text-white hover:text-[--secondary] transition-colors"
+              className="text-white hover:text-[--secondary] transition-colors bg-[--background3] rounded-full p-2 flex items-center justify-center hover:bg-[--background3]/80"
             >
               {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
             </button>
@@ -54,7 +56,7 @@ function SideBar({ isLanding }) {
                 <Link
                   to={item.url}
                   key={i}
-                  className={`flex items-center gap-4 px-3 py-2 rounded-md transition-all ${
+                  className={`w-46 flex items-center gap-4 px-3 py-2 rounded-md transition-all ${
                     isActive
                       ? "text-[--secondary] bg-white/10"
                       : "text-white hover:bg-white/5"
