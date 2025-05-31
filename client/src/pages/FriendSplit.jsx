@@ -162,54 +162,60 @@ const FriendSplit = () => {
 
   return (
     <div className=' flex justify-center items-center w-full h-full'>
-      <div className='fixed h-[65vh] w-[28vw] bg-[--background2] rounded-md flex flex-col p-2 shadow-lg shadow-black translate-y-[-10%]'>
+      <div className='fixed h-[70vh] w-[32vw] bg-[--background2] rounded-md flex flex-col p-2  shadow-black translate-y-[-10%] border border-white border-opacity-10 z-10'>
 
         <h1 className='text-[31px] text-[#3C9A87]  font-semibold text-center'>Select friend</h1>
-        <div className='mt-1 bg-[--background] w-[20vw] mx-auto py-2 rounded-[20px] h-[40px] pl-2 flex gap-3 justify-start outline-none focus:outline-none' >
-
-          <div ><Search className='hover:cursor-pointer hover:text-purple-600' onClick={handleSearch} /></div>
-          <input type="text" name="" id="" className=' text-[--ternary] bg-inherit outline-none border-solid  border-b border-[#B8B8FF] ' placeholder='Search' />
-
+           <div className="mb-4">
+          <div className="relative w-[80%] mx-auto">
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
+              <Search className="w-5 h-5 text-[--ternary] hover:text-[--primary] cursor-pointer transition-colors" onClick={handleSearch} />
+            </div>
+            <input 
+              type="text" 
+              className="input-focus w-full bg-[--background] text-[--ternary] pl-12 pr-4 py-3 rounded-xl outline-none placeholder-gray-400"
+              placeholder="Search friends..."
+            />
+          </div>
         </div>
+<div className="card-container h-[38vh] w-[29vw] mx-auto mt-2 rounded-lg overflow-y-auto p-2 custom-scrollbar bg-[--background3]">
 
-        <div className=" card-container h-[38vh] bg-[background3] w-[24vw] mx-auto mt-2 rounded-lg overflow-y-auto p-2 custom-scrollbar ">
-
-          {
-            user?.friends?.map((friend, index) => (
-              <div
-                key={crypto.randomUUID()}
-                className="card mt-3 w-full bg-[--background] h-[9vh] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-105 transition-all delay-100"
-                onClick={() => setSelectedFriend(friend)}
-              >
-                <div className="flex justify-between w-[200px] items-center gap-3 min-h-[50px]">
-                  <div className='h-[45px] w-[55px] rounded-[30px] flex justify-center my-auto bg-white'>
-                    <img
-                      src={`/images/Friends/${index % 2 === 0 ? '1' : '2'}.png`}
-                      alt="Friend"
-                      className='object-contain rounded-full'
-                    />
-                  </div>
-                  <div className='w-[200px]'>
-                    <h2 className='text-white text-lg'>{friend.name}</h2>
-                  </div>
-                </div>
-                <div className='w-[2vw] h-[4vh]'>
-                  <Plus
-                    className='hover:cursor-pointer hover:text-[--ternary] hover:scale-105'
-                    onClick={() => setIsOpen(true)}
-                  />
-                </div>
-              </div>
-            ))
-          }
-
-
-
+  {user?.friends && user.friends.length > 0 ? (
+    user.friends.map((friend, index) => (
+      <div
+        key={friend._id}
+        className="card mt-3 w-full bg-[--background] h-[70px] rounded-md shadow-md shadow-black flex px-1 justify-between items-center hover:scale-100 hover:text-violet-500 transition-all delay-100"
+        onClick={() => setSelectedFriend(friend)}
+      >
+        <div className="flex justify-between hover:text-violet-500 w-[200px] items-center gap-3 min-h-[50px]">
+          <div className="hover:text-violet-500 h-[45px] w-[55px] rounded-[30px] flex justify-center my-auto">
+            <img
+              src={`/images/Friends/user.png`}
+              alt="Friend"
+              className="object-contain rounded-full"
+            />
+          </div>
+          <div className="w-[200px] hover:text-violet-500">
+            <h2 className="text-white text-lg">{friend.name}</h2>
+          </div>
         </div>
+        <div className="w-[2vw] h-[4vh] text-white">
+          <Plus
+            className="hover:cursor-pointer hover:text-violet-500 hover:scale-105"
+            onClick={() => setIsOpen(true)}
+          />
+        </div>
+      </div>
+    ))
+  ) : (
+    <div className="text-center text-white text-sm mt-10">
+      Please add friends to view list info.
+    </div>
+  )}
+</div>
 
 
         <div className=' w-[80%] mt-2 text-white flex justify-end  items-end '>
-          <button onClick={() => setisAddModalOpen(true)} className='flex bg-[--background3] px-2 py-1 rounded-md translate-x-[50%] hover:bg-[--primary]'>
+          <button onClick={() => setisAddModalOpen(true)} className='flex bg-[--primary] px-2 py-1 rounded-md translate-x-[50%] hover:bg-[--primarydark] w-[7vw] justify-center items-center gap-2 hover:cursor-pointer transition-all duration-300 '>
             <span className='font-semibold'>Add</span> <Plus /></button>
         </div>
 
@@ -234,7 +240,7 @@ const FriendSplit = () => {
 
               <form onSubmit={handleSubmit}>
                 <div className="min-h-[3vh]  flex flex-col w-[90%]  gap-4 items-center justify-center  ">
-                  <h1 className='text-[30px] translate-y-[-20%] '>Add new friend</h1>
+                  <h1 className='text-[30px] translate-y-[-20%] text-[--heading] font-semibold '>Add new friend</h1>
 
                   <input
                     type="text"
@@ -272,7 +278,7 @@ const FriendSplit = () => {
 
 
                 <div className='w-full justify-center flex'>
-                  <button type='submit' className=' hover:bg-violet-600 text-center bg-[--primary] py-2 px-3 w-[7vw] rounded-md text-bold text-white'>
+                  <button type='submit' className=' hover:bg-violet-600 text-center bg-[--primary] py-2 px-4 w-[10vw] rounded-md text-bold text-white'>
                     <span className='font-semibold'>Add </span>
                   </button>
                 </div>

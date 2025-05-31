@@ -62,7 +62,7 @@ const AppLayout = () => {
           {/* <Route path="/home" element={<AuthHOC><Home /></AuthHOC>} /> */}
           <Route path="/home" element={<Home avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl}  />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/settle" element={<Settle />} />
+          <Route path="/settle" element={<AuthHOC><Settle /></AuthHOC>} />
           <Route path="/analytics" element={<AuthHOC><Analytics /></AuthHOC>} />
           <Route path="/groups" element={<AuthHOC><Groups /></AuthHOC>} />
           <Route path="/split" element={<AuthHOC><Split /></AuthHOC>} />

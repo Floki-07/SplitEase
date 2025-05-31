@@ -129,18 +129,20 @@ const Home = ({ avatarUrl, setAvatarUrl }) => {
     <div className="dashboard-container custom-scrollbar">
       {user ? (
         user.verified ? (
-          <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col items-center border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
+          <div className="bg-[#050D35] min-h-screen text-white p-6 flex flex-col  border-l border-white border-opacity-[15%] border-width-[1px] custom-scrollbar">
             {/* Header */}
 
             <div id="top" ref={topRef} className="w-full flex justify-between items-center mb-2 mt-3">
               <h1 className="text-white text-[26px] font-bold">
-                Welcome back <span className="text-[#3C9A87]">{user?.username}</span>
+                Welcome back <span className="text-[#3C9A87]">{user?.username} 👋</span>
               </h1>
-              <h1 className="text-[28px] font-semibold text-[#3C9A87] tracking-wide">Balance: ₹ {user.totalincome - user.totalexpense}</h1>
+             
             </div>
-
+          <div className="">
+             <h1 className="text-[21px] font-semibold text-[#3C9A8 7] text-[--textgreen]  tracking-wide"><span className="text-white">Your Wallet Balance: </span>₹ {user.totalincome - user.totalexpense}</h1>
+          </div>
             {/* Main Dashboard Section */}
-            <div className="flex flex-wrap gap-6 justify-start w-[1200px] mt-[60px]">
+            <div className="flex flex-wrap gap-6 justify-start w-[1200px] mt-[20px]">
               {/* Budget vs Expense */}
               <div className="bg-[#121944] rounded-lg p-6 flex flex-col items-center w-[350px] h-[350px]">
                 <h2 className="text-[#3C9A87] font-semibold mb-4 text-[25px]"> Expense vs Balance </h2>

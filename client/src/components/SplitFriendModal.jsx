@@ -167,7 +167,7 @@ const SplitFriendModal = ({ friend, user, setUser, setIsOpen }) => {
               </select>
 
               <div>
-                <button className=' hover:bg-violet-600 text-center bg-[--primary] py-2 px-3 w-[7vw] rounded-md text-bold text-white'>
+                <button className=' hover:bg-violet-600 text-center bg-[--primary] py-2 px-3 w-[7vw] rounded-md text-bold text-white ml-10'>
                   <span className='font-semibold'>Add Bill</span>
                 </button>
               </div>

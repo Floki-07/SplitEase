@@ -5,17 +5,8 @@ const Landing = () => {
   const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-[var(--background)] text-white font-[var(--outfit)]">
-      {/* Navbar */}
-      {/* <header className="flex justify-between items-center px-8 py-4 bg-[var(--background2)]">
-        <h1 className="text-3xl font-bold text-[var(--primary)]">SplitEase</h1>
-        <nav>
-          <ul className="flex gap-8 text-[var(--ternary)]">
-            <li><a href="#features" className="hover:text-[var(--primary)]">Features</a></li>
-            <li><a href="#about" className="hover:text-[var(--primary)]">About</a></li>
-            <li><a href="#contact" className="hover:text-[var(--primary)]">Contact</a></li>
-          </ul>
-        </nav>
-      </header> */}
+   
+      
 
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center py-20 px-4">
