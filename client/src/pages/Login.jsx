@@ -45,7 +45,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-full w-full">
-      <div className="bg-[var(--background2)] w-[24vw] h-[500px] rounded-md">
+      <div className="bg-[var(--background2)] w-[24vw] h-[300px] rounded-md">
         <div className="text-white flex flex-col items-center mt-10">
           <h1 className="text-[28px] font-semibold text-[--ternary]">Login</h1>
         </div>
@@ -70,7 +70,7 @@ const Login = () => {
           )}
 
           <form method="post" onSubmit={handleSubmit}>
-            <div className="h-[30px] w-[73%] bg-[var(--background3)] mx-auto mt-1 rounded-[5px]">
+            <div className="h-[50px] w-[73%] bg-[var(--background3)] mx-auto mt-1 rounded-[5px]">
               <input
                 type="email"
                 className="h-[50px] w-[14vw] bg-inherit rounded-[5px] p-1 text-[--ternary] focus:outline-none"
