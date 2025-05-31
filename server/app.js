@@ -13,6 +13,11 @@ const jwt = require('jsonwebtoken');
 const authRouter = require('./routers/authRouter')
 const goalRoutes=require('./routers/goalRoutes')
 const app = express();
+const path = require('path');
+// Serve static files from the React app
+
+
+
 
 // connect to database
 const mongoUrl = process.env.DB_URI;
@@ -75,7 +80,13 @@ app.get('/auth/login/failed', async (req, res) => {
 
 
 
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
+// Handle React routing, return all requests to React app
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 
 
