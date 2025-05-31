@@ -23,7 +23,7 @@ const Onboarding = () => {
                 // Token-based onboarding request
                 try {
                     const response = await axios.post(
-                        `http://localhost:3000/api/onboardingdetails`,  // API endpoint
+                        `https://splitease-ke7h.onrender.com/api/onboardingdetails`,  // API endpoint
                         { budget },  // Payload with the budget
                         {
                             headers: {
@@ -50,7 +50,7 @@ const Onboarding = () => {
             // OAuth-based onboarding request
             try {
                 response = await axios.post(
-                    `http://localhost:3000/api/onboardingdetails`,
+                    `https://splitease-ke7h.onrender.com/api/onboardingdetails`,
                     { budget }, // Include the budget as payload
                     {
                         withCredentials: true, // Allows sending cookies

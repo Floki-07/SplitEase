@@ -16,7 +16,7 @@ const AuthHOC = ({ children }) => {
         if (token) {
           // Validate token-based user
           const response = await axios.get(
-            "http://localhost:3000/api/isLoggedIn",
+            "https://splitease-ke7h.onrender.com/api/isLoggedIn",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ const AuthHOC = ({ children }) => {
         } else {
           // Validate OAuth user
           const response = await axios.get(
-            "http://localhost:3000/auth/login/success",
+            "https://splitease-ke7h.onrender.com/auth/login/success",
             {
               withCredentials: true,
               headers: { "Content-Type": "application/json" },

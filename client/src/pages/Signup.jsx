@@ -70,6 +70,9 @@ const Signup = () => {
             <div className="text-red-500 text-md text-center mt-2 mb-1">{error}</div>
           )}
 
+
+
+
           <form onSubmit={handleSignupForm} method="post">
             <div className="h-[50px] w-[73%] bg-[var(--background3)] mx-auto mt-1 rounded-[5px]">
               <input

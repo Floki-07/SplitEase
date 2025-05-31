@@ -20,7 +20,7 @@ function NavBar({ isLanding }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:3000/api/logout", {}, { withCredentials: true });
+      await axios.post("https://splitease-ke7h.onrender.com/api/logout", {}, { withCredentials: true });
       // Clear local storage and navigate to login
       localStorage.removeItem("AvatarUrl");
       localStorage.removeItem("token");
@@ -40,7 +40,7 @@ function NavBar({ isLanding }) {
         let response;
         if (token) {
           try {
-            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -58,7 +58,7 @@ function NavBar({ isLanding }) {
         }
 
         try {
-          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+          response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",

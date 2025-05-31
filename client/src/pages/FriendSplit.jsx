@@ -28,7 +28,7 @@ const FriendSplit = () => {
 
         if (token) {
           try {
-            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -48,7 +48,7 @@ const FriendSplit = () => {
 
         // OAuth login attempt
         try {
-          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+          response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const FriendSplit = () => {
         // Token-based onboarding request
         try {
           const response = await axios.post(
-            `http://localhost:3000/api/addfriend`,  // API endpoint
+            `https://splitease-ke7h.onrender.com/api/addfriend`,  // API endpoint
             { obj },  // Payload with the budget
             {
               headers: {
@@ -122,7 +122,7 @@ const FriendSplit = () => {
       // OAuth-based onboarding request
       try {
         response = await axios.post(
-          `http://localhost:3000/api/addfriend`,
+          `https://splitease-ke7h.onrender.com/api/addfriend`,
           { obj }, // Include the budget as payload
           {
             withCredentials: true, // Allows sending cookies

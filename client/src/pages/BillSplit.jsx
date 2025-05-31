@@ -24,7 +24,7 @@ const BillSplit = () => {
 
                 if (token) {
                     try {
-                        response = await axios.get(`http://localhost:3000/api/group/${groupId}`, {
+                        response = await axios.get(`https://splitease-ke7h.onrender.com/api/group/${groupId}`, {
                             headers: {
                                 Authorization: `Bearer ${token}`,
                             },
@@ -44,7 +44,7 @@ const BillSplit = () => {
 
                 // OAuth login attempt
                 try {
-                    response = await axios.get(`http://localhost:3000/api/group/${groupId}`, {
+                    response = await axios.get(`https://splitease-ke7h.onrender.com/api/group/${groupId}`, {
                         withCredentials: true,
                         headers: {
                             "Content-Type": "application/json",
@@ -118,7 +118,7 @@ const BillSplit = () => {
                 // Token-based request for adding expense
                 try {
                     response = await axios.post(
-                        `http://localhost:3000/api/group/billsplit`,  // API endpoint
+                        `https://splitease-ke7h.onrender.com/api/group/billsplit`,  // API endpoint
                         { expenseData },  // Payload with expense data
                         {
                             headers: {
@@ -153,7 +153,7 @@ const BillSplit = () => {
             // OAuth-based request (if no token, use cookies)
             try {
                 response = await axios.post(
-                    `http://localhost:3000/api/group/billsplit`,  // API endpoint
+                    `https://splitease-ke7h.onrender.com/api/group/billsplit`,  // API endpoint
                     { expenseData }, // Include the expense data as payload
                     {
                         withCredentials: true, // Allows sending cookies for OAuth

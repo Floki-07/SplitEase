@@ -32,7 +32,7 @@ const Groups = () => {
 
         if (token) {
           try {
-            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -53,7 +53,7 @@ const Groups = () => {
 
         // OAuth login attempt
         try {
-          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+          response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
@@ -104,7 +104,7 @@ const Groups = () => {
         // Token-based request for adding expense
         try {
           response = await axios.post(
-            `http://localhost:3000/api/addnewgroup`,  // API endpoint
+            `https://splitease-ke7h.onrender.com/api/addnewgroup`,  // API endpoint
             { newGroup },  // Payload with expense data
             {
               headers: {
@@ -134,7 +134,7 @@ const Groups = () => {
       // OAuth-based request (if no token, use cookies)
       try {
         response = await axios.post(
-          `http://localhost:3000/api/addnewgroup`,  // API endpoint
+          `https://splitease-ke7h.onrender.com/api/addnewgroup`,  // API endpoint
           { newGroup }, // Include the expense data as payload
           {
             withCredentials: true, // Allows sending cookies for OAuth
@@ -186,7 +186,7 @@ const Groups = () => {
         // Token-based request for deleting the goal
         try {
           response = await axios.delete(
-            `http://localhost:3000/api/deletegroup/${groupId}`, // Updated API endpoint for deletion
+            `https://splitease-ke7h.onrender.com/api/deletegroup/${groupId}`, // Updated API endpoint for deletion
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Attach token in Authorization header
@@ -213,7 +213,7 @@ const Groups = () => {
         // OAuth-based request for deleting the Group
         try {
           response = await axios.delete(
-            `http://localhost:3000/api/deletegroup/${groupId}`, // Same endpoint for OAuth
+            `https://splitease-ke7h.onrender.com/api/deletegroup/${groupId}`, // Same endpoint for OAuth
             {
               withCredentials: true, // Allows sending cookies
               headers: {

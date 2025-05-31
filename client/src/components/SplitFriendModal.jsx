@@ -43,7 +43,7 @@ const SplitFriendModal = ({ friend, user, setUser, setIsOpen }) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `http://localhost:3000/api/splitwithfriend`,
+        `https://splitease-ke7h.onrender.com/api/splitwithfriend`,
         { obj }, // Pass the bill splitting object
         {
           headers: {

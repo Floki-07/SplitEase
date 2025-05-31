@@ -24,7 +24,7 @@ const Moneyflow = () => {
         let response;
         if (token) {
           try {
-            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -42,7 +42,7 @@ const Moneyflow = () => {
         }
 
         try {
-          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+          response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import axios from 'axios';
 export const googleAuth = async (code) => {
   try {
     const response = await axios.post(
-      'http://localhost:3000/auth/google/callback',
+      'https://splitease-ke7h.onrender.com/auth/google/callback',
       { code },
       { withCredentials: true }
     );

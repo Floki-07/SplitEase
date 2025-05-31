@@ -18,7 +18,7 @@ const Settle = () => {
 
                 if (token) {
                     try {
-                        response = await axios.get(`http://localhost:3000/api/getallfriends`, {
+                        response = await axios.get(`https://splitease-ke7h.onrender.com/api/getallfriends`, {
                             headers: {
                                 Authorization: `Bearer ${token}`,
                             },
@@ -39,7 +39,7 @@ const Settle = () => {
 
                 // OAuth login attempt
                 try {
-                    response = await axios.get(`http://localhost:3000/api/getallfriends`, {
+                    response = await axios.get(`https://splitease-ke7h.onrender.com/api/getallfriends`, {
                         withCredentials: true,
                         headers: {
                             'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const Settle = () => {
                 // Token-based request for adding expense
                 try {
                     response = await axios.post(
-                        `http://localhost:3000/api/settle/${friendId}`,  // API endpoint
+                        `https://splitease-ke7h.onrender.com/api/settle/${friendId}`,  // API endpoint
                         { obj },  // Payload with expense data
                         {
                             headers: {
@@ -99,7 +99,7 @@ const Settle = () => {
             // OAuth-based request (if no token, use cookies)
             try {
                 response = await axios.post(
-                    `http://localhost:3000/api/settle/${friendId}`,  // API endpoint
+                    `https://splitease-ke7h.onrender.com/api/settle/${friendId}`,  // API endpoint
                     { obj }, // Include the expense data as payload
                     {
                         withCredentials: true, // Allows sending cookies for OAuth

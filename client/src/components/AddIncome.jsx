@@ -36,7 +36,7 @@ const AddIncome = ({ setIncomeOpen, user, setUser }) => {
             // Token-based onboarding request
             try {
                 const response = await axios.post(
-                    `http://localhost:3000/api/addincome`,  // API endpoint
+                    `https://splitease-ke7h.onrender.com/api/addincome`,  // API endpoint
                     { obj },  // Payload with the budget
                     {
                         headers: {
@@ -66,7 +66,7 @@ const AddIncome = ({ setIncomeOpen, user, setUser }) => {
         // OAuth-based onboarding request
         try {
             response = await axios.post(
-                `http://localhost:3000/api/addincome`,
+                `https://splitease-ke7h.onrender.com/api/addincome`,
                 { obj }, // Include the budget as payload
                 {
                     withCredentials: true, // Allows sending cookies

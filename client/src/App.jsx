@@ -82,16 +82,6 @@ const AppLayout = () => {
 
 
 
-// const SignUpGoogleWrapper = () => {
-//   return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-//     <Signup />
-//   </GoogleOAuthProvider>
-// }
-// const LoginGoogleWrapper = () => {
-//   return <GoogleOAuthProvider clientId="429032797665-vjlut1lkn6g4o05gqgdnnp1rs5m2t68k.apps.googleusercontent.com">
-//     <Login />
-//   </GoogleOAuthProvider>
-// }
 function App() {
   return (
     

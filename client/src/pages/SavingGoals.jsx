@@ -26,7 +26,7 @@ const SavingsGoalsPage = () => {
 
         if (token) {
           try {
-            response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+            response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -44,7 +44,7 @@ const SavingsGoalsPage = () => {
 
         // OAuth login attempt
         try {
-          response = await axios.get(`http://localhost:3000/api/getUserInfo`, {
+          response = await axios.get(`https://splitease-ke7h.onrender.com/api/getUserInfo`, {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
@@ -80,7 +80,7 @@ const SavingsGoalsPage = () => {
         // Token-based onboarding request
         try {
           const response = await axios.post(
-            `http://localhost:3000/api/addgoal`,  // API endpoint
+            `https://splitease-ke7h.onrender.com/api/addgoal`,  // API endpoint
             { goal },  // Payload with the budget
             {
               headers: {
@@ -105,7 +105,7 @@ const SavingsGoalsPage = () => {
       // OAuth-based onboarding request
       try {
         response = await axios.post(
-          `http://localhost:3000/api/addgoal`,
+          `https://splitease-ke7h.onrender.com/api/addgoal`,
           { goal }, // Include the budget as payload
           {
             withCredentials: true, // Allows sending cookies
@@ -156,7 +156,7 @@ const SavingsGoalsPage = () => {
         // Token-based onboarding request
         try {
           const response = await axios.post(
-            `http://localhost:3000/api/addmoneytogoal/${goal._id}`,  // API endpoint
+            `https://splitease-ke7h.onrender.com/api/addmoneytogoal/${goal._id}`,  // API endpoint
             { addMoneyAmount },  // Payload with the budget
             {
               headers: {
@@ -181,7 +181,7 @@ const SavingsGoalsPage = () => {
       // OAuth-based onboarding request
       try {
         response = await axios.post(
-          `http://localhost:3000/api/addmoneytogoal/${goal._id}`,
+          `https://splitease-ke7h.onrender.com/api/addmoneytogoal/${goal._id}`,
           { addMoneyAmount }, // Include the budget as payload
           {
             withCredentials: true, // Allows sending cookies
@@ -240,7 +240,7 @@ const SavingsGoalsPage = () => {
         // Token-based request for deleting the goal
         try {
           response = await axios.delete(
-            `http://localhost:3000/api/deletegoal/${goalId}`, // Updated API endpoint for deletion
+            `https://splitease-ke7h.onrender.com/api/deletegoal/${goalId}`, // Updated API endpoint for deletion
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Attach token in Authorization header
@@ -262,7 +262,7 @@ const SavingsGoalsPage = () => {
         // OAuth-based request for deleting the goal
         try {
           response = await axios.delete(
-            `http://localhost:3000/api/deletegoal/${goalId}`, // Same endpoint for OAuth
+            `https://splitease-ke7h.onrender.com/api/deletegoal/${goalId}`, // Same endpoint for OAuth
             {
               withCredentials: true, // Allows sending cookies
               headers: {

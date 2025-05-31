@@ -44,7 +44,7 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
             if (token) {
                 try {
                     response = await axios.post(
-                        `http://localhost:3000/api/addexpense`,
+                        `https://splitease-ke7h.onrender.com/api/addexpense`,
                         { expenseData },
                         {
                             headers: {
@@ -73,7 +73,7 @@ const AddExpense = ({ setExpensOpen, user, setUser }) => {
 
             try {
                 response = await axios.post(
-                    `http://localhost:3000/api/addexpense`,
+                    `https://splitease-ke7h.onrender.com/api/addexpense`,
                     { expenseData },
                     {
                         withCredentials: true,
