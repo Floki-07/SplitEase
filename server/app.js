@@ -48,7 +48,7 @@ app.use('/api/goals', goalRoutes);
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] }));
 
 app.get("/auth/google/callback", passport.authenticate("google", {
-  successRedirect: 'http://localhost:5173/home', // to client
+  successRedirect: 'https://splitease-ke7h.onrender.com/home', // to client
   failureRedirect: "/auth/login/failed"
 }));
 
