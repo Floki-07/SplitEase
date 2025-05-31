@@ -70,7 +70,7 @@ const Login = () => {
           )}
 
           <form method="post" onSubmit={handleSubmit}>
-            <div className="h-[50px] w-[73%] bg-[var(--background3)] mx-auto mt-1 rounded-[5px]">
+            <div className="h-[30px] w-[73%] bg-[var(--background3)] mx-auto mt-1 rounded-[5px]">
               <input
                 type="email"
                 className="h-[50px] w-[14vw] bg-inherit rounded-[5px] p-1 text-[--ternary] focus:outline-none"
