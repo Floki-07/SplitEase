@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+const baseURL = process.env.BASE_URL;
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -18,7 +19,7 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/login', formData, {
+      const response = await axios.post('https://splitease-ke7h.onrender.com/api/login', formData, {
         headers: { 'Content-Type': 'application/json' },
       });
 
@@ -39,7 +40,7 @@ const Login = () => {
   };
 
   const handleOauth = () => {
-    window.location.href = 'http://localhost:3000/auth/google/callback';
+    window.location.href = 'https://splitease-ke7h.onrender.com/auth/google/callback';
   };
 
   return (

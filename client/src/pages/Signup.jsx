@@ -19,7 +19,7 @@ const Signup = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:3000/api/signup', formData, {
+      const response = await axios.post('https://splitease-ke7h.onrender.com/api/signup', formData, {
         withCredentials: true,
       });
 
@@ -41,7 +41,7 @@ const Signup = () => {
   };
 
   const handleOauth = () => {
-    window.location.href = 'http://localhost:3000/auth/google/callback';
+    window.location.href = 'https://splitease-ke7h.onrender.com/auth/google/callback';
   };
 
   return (

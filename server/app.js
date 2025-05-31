@@ -17,7 +17,7 @@ const path = require('path');
 // Serve static files from the React app
 
 
-
+BASE_URL = process.env.BASE_URL ;
 
 // connect to database
 const mongoUrl = process.env.DB_URI;
@@ -25,7 +25,7 @@ const db = mongoose.connect(mongoUrl);
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: BASE_URL,
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'Access-Control-Allow-Credentials', 'Authorization', 'x-correlation-id'],
   credentials: true // mandoatory for google auths
